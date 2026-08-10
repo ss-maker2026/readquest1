@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ダンジョンの深さ（レベル）に応じてJS側で書き換えられる背景色。
+     初期値は「洞窟の入口」の色合い。 */
+  --dungeon-glow1: #f8efd8;
+  --dungeon-glow2: #eee3cf;
+  --dungeon-glow3: #f2e7d2;
+  --dungeon-base: #f1ece1;
+}
+
+body {
+  min-height: 100dvh;
+  background:
+    radial-gradient(circle at 12% -10%, var(--dungeon-glow1) 0%, transparent 50%),
+    radial-gradient(circle at 100% 15%, var(--dungeon-glow2) 0%, transparent 55%),
+    radial-gradient(circle at 50% 100%, var(--dungeon-glow3) 0%, transparent 60%),
+    var(--dungeon-base);
+  background-attachment: fixed;
+  transition: background-color 0.8s ease;
+  color: #565e63;
+}
+
+::selection {
+  background-color: #8fb8d6;
+  color: #ffffff;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
