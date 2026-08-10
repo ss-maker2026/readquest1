@@ -13,43 +13,29 @@ type Props = {
   count: number;
 };
 
-const BAR_SEGMENTS = 16;
-
 export default function ReadingCharacter({ count }: Props) {
-  const { level, title, progress, remaining, isMaxLevel } =
-    getCharacterProgress(count);
-  const filledSegments = Math.round(progress * BAR_SEGMENTS);
+  const { level, title, remaining, isMaxLevel } = getCharacterProgress(count);
 
   return (
-    <div className="mb-8 flex flex-col items-center gap-3 rounded-2xl border border-white/60 bg-white/50 px-6 py-7 text-center shadow-sm shadow-ink/5 backdrop-blur-sm">
-      <div className="rounded-md border-[3px] border-[#EDEFF5] bg-gradient-to-b from-[#26346E] to-[#0C1330] p-3 shadow-[inset_0_0_0_2px_#0A0E22]">
+    <div className="mb-8 flex items-center justify-center gap-6 rounded-2xl border border-white/60 bg-white/50 px-8 py-6 shadow-sm shadow-ink/5 backdrop-blur-sm">
+      <div className="shrink-0 rounded-md border-[3px] border-[#EDEFF5] bg-gradient-to-b from-[#26346E] to-[#0C1330] p-2 shadow-[inset_0_0_0_2px_#0A0E22]">
         <CharacterAvatar level={level} />
       </div>
 
-      <div>
+      <div className="flex flex-col items-start pt-1 text-left">
         <p
-          className={`${pixelFont.className} text-[11px] tracking-tight text-accent`}
+          className={`${pixelFont.className} text-base tracking-tight text-accent`}
         >
           Lv.{level}
           <span className="text-ink/30"> / 99</span>
         </p>
-        <p className="mt-1 font-serif text-lg font-medium text-ink">
+        <p className="mt-2 font-serif text-2xl font-medium text-ink">
           {title}
         </p>
-      </div>
-
-      <div className="w-full max-w-[220px]">
-        <div className="flex gap-[2px] rounded-sm border border-ink/15 bg-ink/[0.06] p-[3px]">
-          {Array.from({ length: BAR_SEGMENTS }).map((_, i) => (
-            <span
-              key={i}
-              className={`h-2.5 flex-1 transition-colors duration-300 ${
-                i < filledSegments ? "bg-accent" : "bg-ink/10"
-              }`}
-            />
-          ))}
-        </div>
-        <p className="mt-2 text-xs text-ink/40">
+        <p className="mt-3 text-sm text-ink/50">
+          {count.toLocaleString()}冊読了
+        </p>
+        <p className="mt-1 text-sm text-ink/40">
           {isMaxLevel
             ? "最高レベルに到達しました"
             : `次のレベルまであと${remaining.toLocaleString()}冊`}

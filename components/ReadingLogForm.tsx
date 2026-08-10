@@ -1,8 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import type { AcquisitionMethod, BookFormat, BookLog } from "@/lib/types";
-import { ACQUISITION_LABELS, FORMAT_LABELS } from "@/lib/types";
+import type {
+  AcquisitionMethod,
+  BookFormat,
+  BookLog,
+  BookRatings,
+} from "@/lib/types";
+import {
+  ACQUISITION_LABELS,
+  FORMAT_LABELS,
+  RATING_CRITERIA,
+  defaultRatings,
+} from "@/lib/types";
 
 export type NewBookLog = {
   title: string;
@@ -13,6 +23,7 @@ export type NewBookLog = {
   review: string;
   shared: boolean;
   keepForever: boolean;
+  ratings: BookRatings;
 };
 
 type Props = {
@@ -41,6 +52,9 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
   const [review, setReview] = useState(initial?.review ?? "");
   const [shared, setShared] = useState(initial?.shared ?? false);
   const [keepForever, setKeepForever] = useState(initial?.keepForever ?? false);
+  const [ratings, setRatings] = useState<BookRatings>(
+    initial?.ratings ?? defaultRatings()
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +70,7 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
       review: review.trim(),
       shared,
       keepForever,
+      ratings,
     });
   };
 
@@ -172,6 +187,20 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
         />
       </label>
 
+      <div className="flex flex-col gap-2.5 rounded-lg border border-ink/10 bg-paper/40 p-4">
+        <span className="text-xs font-medium tracking-wide text-ink/50">
+          評価（5点満点）
+        </span>
+        {RATING_CRITERIA.map(({ key, label }) => (
+          <StarRow
+            key={key}
+            label={label}
+            value={ratings[key]}
+            onChange={(v) => setRatings((prev) => ({ ...prev, [key]: v }))}
+          />
+        ))}
+      </div>
+
       <div className="flex flex-col gap-3 sm:flex-row sm:gap-8">
         <ToggleRow
           label="誰かにシェアした"
@@ -202,6 +231,43 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
         </button>
       </div>
     </form>
+  );
+}
+
+function StarRow({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-sm text-ink/65">{label}</span>
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            key={n}
+            type="button"
+            onClick={() => onChange(n)}
+            aria-label={`${label} ${n}点`}
+            aria-pressed={n <= value}
+            className="p-0.5"
+          >
+            <svg
+              viewBox="0 0 20 20"
+              className={`h-5 w-5 transition-colors ${
+                n <= value ? "fill-gold" : "fill-ink/15"
+              }`}
+            >
+              <path d="M10 1.2 12.7 7l6.3.7-4.6 4.4 1.2 6.2L10 15.2l-5.6 3.1 1.2-6.2L1 7.7 7.3 7Z" />
+            </svg>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
