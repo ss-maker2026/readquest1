@@ -5,6 +5,7 @@ import type { BookLog } from "@/lib/types";
 import ReadingLogForm, { type NewBookLog } from "@/components/ReadingLogForm";
 import ReadingLogItem from "@/components/ReadingLogItem";
 import ReadingCharacter from "@/components/ReadingCharacter";
+import ImportExportBar from "@/components/ImportExportBar";
 import { MAX_LOGS, getCharacterProgress, getDungeonZone } from "@/lib/character";
 
 const STORAGE_KEY = "reading-log-app:logs";
@@ -75,8 +76,17 @@ export default function ReadingLogApp() {
     );
   };
 
+  const importLogs = (imported: BookLog[]) => {
+    setLogs((prev) => {
+      const remaining = Math.max(0, MAX_LOGS - prev.length);
+      return sortLogs([...imported.slice(0, remaining), ...prev]);
+    });
+  };
+
   return (
     <div className="space-y-5">
+      <ImportExportBar logs={logs} onImport={importLogs} />
+
       <ReadingCharacter count={logs.length} />
 
       {formState ? (
