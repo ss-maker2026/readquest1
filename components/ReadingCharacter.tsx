@@ -1,7 +1,7 @@
 "use client";
 
 import { Press_Start_2P } from "next/font/google";
-import { getCharacterProgress, getKingComment } from "@/lib/character";
+import { getCharacterProgress, getReadingQuote } from "@/lib/character";
 
 const pixelFont = Press_Start_2P({
   subsets: ["latin"],
@@ -15,21 +15,21 @@ type Props = {
 
 export default function ReadingCharacter({ count }: Props) {
   const { level, title, remaining, isMaxLevel } = getCharacterProgress(count);
-  const kingComment = getKingComment(level);
+  const quote = getReadingQuote(level);
 
   return (
     <div className="mb-8 overflow-hidden rounded-2xl border-2 border-glow-gold/50 bg-black/35 shadow-sm shadow-ink/5 backdrop-blur-sm">
       <div className="flex items-baseline gap-2.5 border-b border-glow-gold/25 px-5 py-2.5">
         <span className="shrink-0 text-[10px] font-semibold tracking-wide text-glow-gold">
-          天のこえ
+          {quote.author}
         </span>
         <span className="min-w-0 text-xs leading-relaxed text-glow-gold/70">
-          「{kingComment}」
+          「{quote.text}」
         </span>
       </div>
 
       <div className="flex items-center justify-center gap-6 px-6 py-6 sm:px-8">
-        <div className="shrink-0 rounded-md border-[3px] border-[#EDEFF5] bg-gradient-to-b from-[#26346E] to-[#0C1330] p-2 shadow-[inset_0_0_0_2px_#0A0E22]">
+        <div className="shrink-0 rounded-md border-[3px] border-glow-gold bg-gradient-to-b from-[var(--dungeon-base)] to-[var(--dungeon-glow3)] p-2 shadow-[inset_0_0_0_2px_#0A0E22] transition-colors duration-700">
           <CharacterAvatar level={level} />
         </div>
 

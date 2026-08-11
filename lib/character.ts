@@ -57,17 +57,17 @@ export type DungeonZone = {
   // 半透明カード上に乗る文字色（R G B）。濃紺化がまだの帯は
   // 従来のink色のままにしておく。
   textRgb: string;
-  // Lv.数字(緑)と天のこえラベル(ゴールド)の文字色（R G B）。
+  // Lv.数字(緑)とラベル(ゴールド)の文字色（R G B）。
   // 濃紺化がまだの帯は従来のaccent/gold色のままにしておく。
   accentRgb: string;
   goldRgb: string;
-  kingComments: string[];
+  quotes: { author: string; text: string }[];
 };
 
 // レベルが上がるほど、洞窟の入口から深部へ潜っていくイメージで
 // 背景の色合いを変化させる。ロゴ・キャラクター枠の濃紺+ゴールドを起点に、
 // レベルが上がるごとに段階的に暗く深い色へ変化していく。
-// 各帯には、王が読書の歩みに寄せる格言も紐づけている。
+// 各帯には、古今東西の偉人が読書について残した言葉を紐づけている。
 export const DUNGEON_ZONES: DungeonZone[] = [
   {
     from: 1,
@@ -79,10 +79,19 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     textRgb: "236 231 218",
     accentRgb: "111 227 176",
     goldRgb: "240 217 140",
-    kingComments: [
-      "よくぞいらっしゃいました、若き読み手さん。一冊の本が、あなたの道を照らしてくれるでしょう。",
-      "本を開くことは、新たな世界の扉を開くことです。恐れずに読み進めてくださいね。",
-      "たとえ一行でも、読んだ言葉はあなたの力となりますよ。",
+    quotes: [
+      {
+        author: "ルネ・デカルト",
+        text: "良書を読むことは、過去の最もすぐれた人々と語り合うようなものである。",
+      },
+      {
+        author: "孔子",
+        text: "学びて時に之を習う、亦た説ばしからずや。",
+      },
+      {
+        author: "フランシス・ベーコン",
+        text: "読書は人を豊かにし、対話は人を機敏にし、著述は人を確かにする。",
+      },
     ],
   },
   {
@@ -95,10 +104,19 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     textRgb: "236 231 218",
     accentRgb: "111 227 176",
     goldRgb: "240 217 140",
-    kingComments: [
-      "読み重ねてきたあなたの中には、静かな知恵が育っていますよ。",
-      "本とは友のようなものです。何度でも語り合ってくださいね。",
-      "頁をめくる音は、心が成長する音なのです。",
+    quotes: [
+      {
+        author: "ヘンリー・デイヴィッド・ソロー",
+        text: "一冊の本を読んだことがきっかけで、新たな時代を歩み始めた者は数知れない。",
+      },
+      {
+        author: "荀子",
+        text: "学は以て已むべからず。",
+      },
+      {
+        author: "ラルフ・ワルド・エマソン",
+        text: "読んだ本の中身は忘れてしまっても、その本は確かに私を形づくっている。",
+      },
     ],
   },
   {
@@ -111,10 +129,19 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     textRgb: "236 231 218",
     accentRgb: "111 227 176",
     goldRgb: "240 217 140",
-    kingComments: [
-      "剣を取るように、本を手に取ってみてください。知恵は最も鋭い刃となりますよ。",
-      "読むことを恐れない人だけが、物語の核心にたどり着けるのです。",
-      "一冊の本が、千の経験に値することもあるのですよ。",
+    quotes: [
+      {
+        author: "マルクス・トゥッリウス・キケロ",
+        text: "本のない部屋は、魂のない身体のようなものだ。",
+      },
+      {
+        author: "杜甫",
+        text: "読書破万巻、筆を下せば神あるが如し。",
+      },
+      {
+        author: "マーク・トウェイン",
+        text: "本を読まない者は、文字を読めない者と何ら変わりはない。",
+      },
     ],
   },
   {
@@ -127,10 +154,19 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     textRgb: "236 231 218",
     accentRgb: "111 227 176",
     goldRgb: "240 217 140",
-    kingComments: [
-      "静かな水脈のように、知識は深く流れ続けていくものです。",
-      "読み終えた本の数だけ、あなたは違う自分になっているはずですよ。",
-      "本を閉じた後にこそ、本当の読書が始まるのです。",
+    quotes: [
+      {
+        author: "ヴォルテール",
+        text: "書物から得る学びは火のようなものだ。隣人から分けてもらい、自らの家で灯し、他者に伝えることで、やがて万人のものとなる。",
+      },
+      {
+        author: "韓愈",
+        text: "学業は勤めることで深まり、怠ければ荒れ果てる。",
+      },
+      {
+        author: "ミシェル・ド・モンテーニュ",
+        text: "読書ほど安上がりで、長続きする喜びはない。",
+      },
     ],
   },
   {
@@ -143,10 +179,19 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     textRgb: "236 231 218",
     accentRgb: "111 227 176",
     goldRgb: "240 217 140",
-    kingComments: [
-      "灼熱の情熱を持って読み進める人にこそ、道は開かれていきますよ。",
-      "あなたはもう、物語を読む人ではなく、物語を生きる人なのです。",
-      "知恵の炎は、あなたの内でずっと燃え続けていますよ。",
+    quotes: [
+      {
+        author: "トーマス・ジェファーソン",
+        text: "本なしでは生きられない。",
+      },
+      {
+        author: "諸葛亮",
+        text: "学ばざれば以て才を広むる無く、志さざれば以て学を成す無し。",
+      },
+      {
+        author: "フランシス・ベーコン",
+        text: "ある本は味わうべきものであり、ある本は飲み込むべきものであり、そして少数の本はよく噛んで消化すべきものである。",
+      },
     ],
   },
   {
@@ -159,10 +204,19 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     textRgb: "236 231 218",
     accentRgb: "111 227 176",
     goldRgb: "240 217 140",
-    kingComments: [
-      "あなたはついに、言葉の深淵を覗く者となりました。",
-      "読書神さん、あなたの物語もまた、いつか誰かの一冊となることでしょう。",
-      "これ以上の高みはありません。ただ、読み続けてくださいね。",
+    quotes: [
+      {
+        author: "フランツ・カフカ",
+        text: "本というものは、私たちの中の凍りついた海を割る斧でなければならない。",
+      },
+      {
+        author: "佐藤一斎",
+        text: "少にして学べば、則ち壮にして為すことあり。",
+      },
+      {
+        author: "董遇",
+        text: "読書百遍、義自ずから見る。",
+      },
     ],
   },
 ];
@@ -177,10 +231,10 @@ export function getDungeonZone(level: number): DungeonZone {
 
 // レベル帯ごとに複数の格言を持たせ、帯の中でもレベルに応じて少しずつ
 // 表示される言葉が変わるようにする（ランダムではなく決定的に選ぶ）。
-export function getKingComment(level: number): string {
+export function getReadingQuote(level: number): { author: string; text: string } {
   const zone = getDungeonZone(level);
-  const index = level % zone.kingComments.length;
-  return zone.kingComments[index];
+  const index = level % zone.quotes.length;
+  return zone.quotes[index];
 }
 
 export type CharacterProgress = {
