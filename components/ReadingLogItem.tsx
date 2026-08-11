@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import type { BookLog } from "@/lib/types";
 import { ACQUISITION_LABELS, FORMAT_LABELS } from "@/lib/types";
 import MiniRatingRadar from "@/components/MiniRatingRadar";
@@ -8,6 +9,7 @@ type Props = {
   log: BookLog;
   onEdit: (log: BookLog) => void;
   onDelete: (id: string) => void;
+  highlighted?: boolean;
 };
 
 const formatDate = (value: string) => {
@@ -16,9 +18,29 @@ const formatDate = (value: string) => {
   return `${y}年${m}月${d}日`;
 };
 
-export default function ReadingLogItem({ log, onEdit, onDelete }: Props) {
+export default function ReadingLogItem({
+  log,
+  onEdit,
+  onDelete,
+  highlighted,
+}: Props) {
+  const liRef = useRef<HTMLLIElement>(null);
+
+  useEffect(() => {
+    if (highlighted) {
+      liRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [highlighted]);
+
   return (
-    <li className="group animate-fade-in relative rounded-2xl border border-ink/[0.06] bg-white p-4 shadow-sm shadow-ink/5 transition-shadow hover:shadow-md hover:shadow-ink/[0.06] sm:p-5">
+    <li
+      ref={liRef}
+      className={`group animate-fade-in relative rounded-2xl border bg-white p-4 shadow-sm shadow-ink/5 transition-all hover:shadow-md hover:shadow-ink/[0.06] sm:p-5 ${
+        highlighted
+          ? "border-accent ring-2 ring-accent/40"
+          : "border-ink/[0.06]"
+      }`}
+    >
       <div className="absolute right-3 top-3 flex items-center gap-1 opacity-0 transition-all group-hover:opacity-100 focus-within:opacity-100">
         <button
           type="button"

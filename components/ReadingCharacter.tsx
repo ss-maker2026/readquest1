@@ -28,19 +28,19 @@ export default function ReadingCharacter({ count }: Props) {
         </span>
       </div>
 
-      <div className="flex items-center justify-center gap-6 px-6 py-6 sm:px-8">
+      <div className="flex items-center justify-center gap-4 px-6 py-6 sm:gap-6 sm:px-8">
         <div className="shrink-0 rounded-md border-[3px] border-glow-gold bg-gradient-to-b from-[var(--dungeon-base)] to-[var(--dungeon-glow3)] p-2 shadow-[inset_0_0_0_2px_#0A0E22] transition-colors duration-700">
           <CharacterAvatar level={level} />
         </div>
 
-        <div className="flex flex-col items-start pt-1 text-left">
+        <div className="flex min-w-0 flex-col items-start pt-1 text-left">
           <p
-            className={`${pixelFont.className} text-base tracking-tight text-glow-green`}
+            className={`${pixelFont.className} whitespace-nowrap text-xs tracking-tight text-glow-green sm:text-base`}
           >
             Lv.{level}
             <span className="text-glow-gold/30"> / 99</span>
           </p>
-          <p className="mt-2 font-serif text-2xl font-medium text-glow-gold">
+          <p className="mt-2 whitespace-nowrap font-serif text-lg font-medium text-glow-gold sm:text-2xl">
             {title}
           </p>
           <p className="mt-3 text-sm text-glow-gold/50">

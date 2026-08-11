@@ -151,7 +151,7 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
 
         <div className="flex flex-col gap-1.5">
           <span className="text-xs font-medium tracking-wide text-ink/50">
-            媒体
+            形式
           </span>
           <div className="flex gap-2">
             {(Object.keys(FORMAT_LABELS) as BookFormat[]).map((key) => (

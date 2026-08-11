@@ -30,6 +30,7 @@ export default function ReadingLogApp() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [formState, setFormState] = useState<FormState>(null);
   const [previewLevel, setPreviewLevel] = useState<number | null>(null);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
 
   useEffect(() => {
     try {
@@ -67,6 +68,12 @@ export default function ReadingLogApp() {
     root.setProperty("--glow-gold-rgb", zone.goldRgb);
   }, [level]);
 
+  useEffect(() => {
+    if (!highlightId) return;
+    const timer = window.setTimeout(() => setHighlightId(null), 2000);
+    return () => window.clearTimeout(timer);
+  }, [highlightId]);
+
   const addLog = (entry: NewBookLog) => {
     const newLog: BookLog = {
       id: crypto.randomUUID(),
@@ -75,6 +82,7 @@ export default function ReadingLogApp() {
     };
     setLogs((prev) => sortLogs([newLog, ...prev]));
     setFormState(null);
+    setHighlightId(newLog.id);
   };
 
   const updateLog = (id: string, entry: NewBookLog) => {
@@ -82,6 +90,7 @@ export default function ReadingLogApp() {
       sortLogs(prev.map((log) => (log.id === id ? { ...log, ...entry } : log)))
     );
     setFormState(null);
+    setHighlightId(id);
   };
 
   const deleteLog = (id: string) => {
@@ -167,6 +176,7 @@ export default function ReadingLogApp() {
               log={log}
               onEdit={(target) => setFormState({ mode: "edit", log: target })}
               onDelete={deleteLog}
+              highlighted={log.id === highlightId}
             />
           ))}
         </ul>

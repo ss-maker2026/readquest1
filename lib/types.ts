@@ -46,7 +46,7 @@ export const ACQUISITION_LABELS: Record<AcquisitionMethod, string> = {
 };
 
 export const FORMAT_LABELS: Record<BookFormat, string> = {
-  paper: "紙媒体",
+  paper: "紙",
   ebook: "電子書籍",
   audiobook: "オーディオブック",
 };
