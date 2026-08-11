@@ -9,6 +9,9 @@ const config: Config = {
     extend: {
       colors: {
         ink: "#565E63",
+        mist: "rgb(var(--mist-rgb) / <alpha-value>)",
+        "glow-green": "rgb(var(--glow-green-rgb) / <alpha-value>)",
+        "glow-gold": "rgb(var(--glow-gold-rgb) / <alpha-value>)",
         paper: "#EFF6FB",
         accent: {
           DEFAULT: "#7FA593",

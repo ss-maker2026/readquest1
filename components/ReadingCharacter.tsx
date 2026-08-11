@@ -1,11 +1,7 @@
 "use client";
 
 import { Press_Start_2P } from "next/font/google";
-import {
-  getCharacterProgress,
-  getKingComment,
-  getIllustrationForLevel,
-} from "@/lib/character";
+import { getCharacterProgress, getKingComment } from "@/lib/character";
 
 const pixelFont = Press_Start_2P({
   subsets: ["latin"],
@@ -20,49 +16,37 @@ type Props = {
 export default function ReadingCharacter({ count }: Props) {
   const { level, title, remaining, isMaxLevel } = getCharacterProgress(count);
   const kingComment = getKingComment(level);
-  const illustration = getIllustrationForLevel(level);
 
   return (
-    <div className="mb-8 overflow-hidden rounded-2xl border border-white/60 bg-white/50 shadow-sm shadow-ink/5 backdrop-blur-sm">
-      <div className="flex items-baseline gap-2.5 border-b border-gold/20 bg-gold-soft/60 px-5 py-2.5">
-        <span className="shrink-0 text-[10px] font-semibold tracking-wide text-gold">
+    <div className="mb-8 overflow-hidden rounded-2xl border-2 border-glow-gold/50 bg-black/35 shadow-sm shadow-ink/5 backdrop-blur-sm">
+      <div className="flex items-baseline gap-2.5 border-b border-glow-gold/25 px-5 py-2.5">
+        <span className="shrink-0 text-[10px] font-semibold tracking-wide text-glow-gold">
           天のこえ
         </span>
-        <span className="min-w-0 text-xs leading-relaxed text-ink/70">
+        <span className="min-w-0 text-xs leading-relaxed text-glow-gold/70">
           「{kingComment}」
         </span>
       </div>
 
       <div className="flex items-center justify-center gap-6 px-6 py-6 sm:px-8">
-        {illustration ? (
-          <div className="h-40 shrink-0 overflow-hidden rounded-md border-[3px] border-[#EDEFF5] shadow-[inset_0_0_0_2px_#0A0E22] sm:h-48">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={illustration.image}
-              alt={`${title}（装備：${illustration.equipmentName}）`}
-              className="h-full w-auto"
-            />
-          </div>
-        ) : (
-          <div className="shrink-0 rounded-md border-[3px] border-[#EDEFF5] bg-gradient-to-b from-[#26346E] to-[#0C1330] p-2 shadow-[inset_0_0_0_2px_#0A0E22]">
-            <CharacterAvatar level={level} />
-          </div>
-        )}
+        <div className="shrink-0 rounded-md border-[3px] border-[#EDEFF5] bg-gradient-to-b from-[#26346E] to-[#0C1330] p-2 shadow-[inset_0_0_0_2px_#0A0E22]">
+          <CharacterAvatar level={level} />
+        </div>
 
         <div className="flex flex-col items-start pt-1 text-left">
           <p
-            className={`${pixelFont.className} text-base tracking-tight text-accent`}
+            className={`${pixelFont.className} text-base tracking-tight text-glow-green`}
           >
             Lv.{level}
-            <span className="text-ink/30"> / 99</span>
+            <span className="text-glow-gold/30"> / 99</span>
           </p>
-          <p className="mt-2 font-serif text-2xl font-medium text-ink">
+          <p className="mt-2 font-serif text-2xl font-medium text-glow-gold">
             {title}
           </p>
-          <p className="mt-3 text-sm text-ink/50">
+          <p className="mt-3 text-sm text-glow-gold/50">
             {count.toLocaleString()}冊読了
           </p>
-          <p className="mt-1 text-sm text-ink/40">
+          <p className="mt-1 text-sm text-glow-gold/40">
             {isMaxLevel
               ? "最高レベルに到達しました"
               : `次のレベルまであと${remaining.toLocaleString()}冊`}

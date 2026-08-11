@@ -54,20 +54,31 @@ export type DungeonZone = {
   glow1: string;
   glow2: string;
   glow3: string;
+  // 半透明カード上に乗る文字色（R G B）。濃紺化がまだの帯は
+  // 従来のink色のままにしておく。
+  textRgb: string;
+  // Lv.数字(緑)と天のこえラベル(ゴールド)の文字色（R G B）。
+  // 濃紺化がまだの帯は従来のaccent/gold色のままにしておく。
+  accentRgb: string;
+  goldRgb: string;
   kingComments: string[];
 };
 
 // レベルが上がるほど、洞窟の入口から深部へ潜っていくイメージで
-// 背景の色合いを変化させる。明るさは常に高めに保ち、文字の可読性を崩さない。
+// 背景の色合いを変化させる。ロゴ・キャラクター枠の濃紺+ゴールドを起点に、
+// レベルが上がるごとに段階的に暗く深い色へ変化していく。
 // 各帯には、王が読書の歩みに寄せる格言も紐づけている。
 export const DUNGEON_ZONES: DungeonZone[] = [
   {
     from: 1,
     name: "洞窟の入口",
-    base: "#F1ECE1",
-    glow1: "#F8EFD8",
-    glow2: "#EEE3CF",
-    glow3: "#F2E7D2",
+    base: "#26346E",
+    glow1: "#8C6B34",
+    glow2: "#34418C",
+    glow3: "#1B2550",
+    textRgb: "236 231 218",
+    accentRgb: "111 227 176",
+    goldRgb: "240 217 140",
     kingComments: [
       "よくぞいらっしゃいました、若き読み手さん。一冊の本が、あなたの道を照らしてくれるでしょう。",
       "本を開くことは、新たな世界の扉を開くことです。恐れずに読み進めてくださいね。",
@@ -77,10 +88,13 @@ export const DUNGEON_ZONES: DungeonZone[] = [
   {
     from: 20,
     name: "苔むした回廊",
-    base: "#E3E8DD",
-    glow1: "#D7E4D0",
-    glow2: "#DCE6D6",
-    glow3: "#E0E8DA",
+    base: "#193433",
+    glow1: "#DDC780",
+    glow2: "#204B35",
+    glow3: "#132C1F",
+    textRgb: "236 231 218",
+    accentRgb: "111 227 176",
+    goldRgb: "240 217 140",
     kingComments: [
       "読み重ねてきたあなたの中には、静かな知恵が育っていますよ。",
       "本とは友のようなものです。何度でも語り合ってくださいね。",
@@ -90,10 +104,13 @@ export const DUNGEON_ZONES: DungeonZone[] = [
   {
     from: 40,
     name: "松明の間",
-    base: "#EADCC6",
-    glow1: "#F1D9A4",
-    glow2: "#E6D09E",
-    glow3: "#EAD5AB",
+    base: "#2F271B",
+    glow1: "#C9B573",
+    glow2: "#553F17",
+    glow3: "#2B200B",
+    textRgb: "236 231 218",
+    accentRgb: "111 227 176",
+    goldRgb: "240 217 140",
     kingComments: [
       "剣を取るように、本を手に取ってみてください。知恵は最も鋭い刃となりますよ。",
       "読むことを恐れない人だけが、物語の核心にたどり着けるのです。",
@@ -103,10 +120,13 @@ export const DUNGEON_ZONES: DungeonZone[] = [
   {
     from: 60,
     name: "地下水脈",
-    base: "#D7E1E1",
-    glow1: "#C5D9DD",
-    glow2: "#CDDBDC",
-    glow3: "#D2DEDE",
+    base: "#102630",
+    glow1: "#B6A367",
+    glow2: "#153B41",
+    glow3: "#0C2124",
+    textRgb: "236 231 218",
+    accentRgb: "111 227 176",
+    goldRgb: "240 217 140",
     kingComments: [
       "静かな水脈のように、知識は深く流れ続けていくものです。",
       "読み終えた本の数だけ、あなたは違う自分になっているはずですよ。",
@@ -116,10 +136,13 @@ export const DUNGEON_ZONES: DungeonZone[] = [
   {
     from: 80,
     name: "溶岩回廊",
-    base: "#E9D1C1",
-    glow1: "#EFB088",
-    glow2: "#E6AE92",
-    glow3: "#EAC0A4",
+    base: "#311613",
+    glow1: "#A2915A",
+    glow2: "#552114",
+    glow3: "#2E120B",
+    textRgb: "236 231 218",
+    accentRgb: "111 227 176",
+    goldRgb: "240 217 140",
     kingComments: [
       "灼熱の情熱を持って読み進める人にこそ、道は開かれていきますよ。",
       "あなたはもう、物語を読む人ではなく、物語を生きる人なのです。",
@@ -129,10 +152,13 @@ export const DUNGEON_ZONES: DungeonZone[] = [
   {
     from: 95,
     name: "深淵の間",
-    base: "#DACFE0",
-    glow1: "#C6B4D8",
-    glow2: "#CEBDDB",
-    glow3: "#D4C5DF",
+    base: "#1A102A",
+    glow1: "#8F7F4E",
+    glow2: "#2E1B44",
+    glow3: "#190E24",
+    textRgb: "236 231 218",
+    accentRgb: "111 227 176",
+    goldRgb: "240 217 140",
     kingComments: [
       "あなたはついに、言葉の深淵を覗く者となりました。",
       "読書神さん、あなたの物語もまた、いつか誰かの一冊となることでしょう。",
@@ -155,73 +181,6 @@ export function getKingComment(level: number): string {
   const zone = getDungeonZone(level);
   const index = level % zone.kingComments.length;
   return zone.kingComments[index];
-}
-
-export type IllustrationTier = {
-  from: number;
-  to: number;
-  equipmentName: string;
-  image: string;
-};
-
-// ChatGPTで生成したイラストが揃った帯だけをここに追加していく。
-// 対応する画像がまだない帯は、従来のドット絵にフォールバックする。
-// 区切りは称号の節目（TITLE_MILESTONES）と揃えている。
-export const ILLUSTRATION_TIERS: IllustrationTier[] = [
-  {
-    from: 1,
-    to: 8,
-    equipmentName: "見習いの外套",
-    image: "/characters/tier-01.png",
-  },
-  {
-    from: 9,
-    to: 16,
-    equipmentName: "革表紙の書",
-    image: "/characters/tier-02.png",
-  },
-  {
-    from: 17,
-    to: 24,
-    equipmentName: "探検者のフード",
-    image: "/characters/tier-03.png",
-  },
-  {
-    from: 25,
-    to: 32,
-    equipmentName: "知識の魔導書",
-    image: "/characters/tier-04.png",
-  },
-  {
-    from: 33,
-    to: 41,
-    equipmentName: "鋼の短剣",
-    image: "/characters/tier-05.png",
-  },
-  {
-    from: 42,
-    to: 49,
-    equipmentName: "伝承の盾",
-    image: "/characters/tier-06.png",
-  },
-  {
-    from: 50,
-    to: 57,
-    equipmentName: "蒼き騎士剣",
-    image: "/characters/tier-07.png",
-  },
-  {
-    from: 58,
-    to: 65,
-    equipmentName: "賢者の杖",
-    image: "/characters/tier-08.png",
-  },
-];
-
-export function getIllustrationForLevel(level: number): IllustrationTier | null {
-  return (
-    ILLUSTRATION_TIERS.find((t) => level >= t.from && level <= t.to) ?? null
-  );
 }
 
 export type CharacterProgress = {

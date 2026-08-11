@@ -91,7 +91,7 @@ const BOOK_BLOCKS: Block[] = [
 
 export default function Logo() {
   return (
-    <div className="inline-flex items-center gap-3 rounded-xl border-2 border-gold bg-gradient-to-b from-[#26346E] to-[#0C1330] px-5 py-3 shadow-[inset_0_0_0_2px_#0A0E22] sm:gap-4 sm:px-7">
+    <div className="inline-flex items-center gap-3 rounded-xl border-2 border-gold bg-gradient-to-b from-[var(--dungeon-base)] to-[var(--dungeon-glow3)] px-5 py-3 shadow-[inset_0_0_0_2px_#0A0E22] transition-colors duration-700 sm:gap-4 sm:px-7">
       <PixelIcon
         blocks={SWORD_BLOCKS}
         gridW={8}
