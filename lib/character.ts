@@ -69,9 +69,9 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#EEE3CF",
     glow3: "#F2E7D2",
     kingComments: [
-      "よくぞ参った、若き読み手よ。一冊の本が、汝の道を照らすであろう。",
-      "本を開くことは、新たな世界の扉を開くこと。恐れずに読み進めよ。",
-      "たとえ一行でも、読んだ言葉は汝の力となる。",
+      "よくぞいらっしゃいました、若き読み手さん。一冊の本が、あなたの道を照らしてくれるでしょう。",
+      "本を開くことは、新たな世界の扉を開くことです。恐れずに読み進めてくださいね。",
+      "たとえ一行でも、読んだ言葉はあなたの力となりますよ。",
     ],
   },
   {
@@ -82,9 +82,9 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#DCE6D6",
     glow3: "#E0E8DA",
     kingComments: [
-      "読み重ねし者よ、汝の中に静かな知恵が育っておる。",
-      "本とは友のようなもの。何度でも語り合うがよい。",
-      "頁をめくる音は、心が成長する音である。",
+      "読み重ねてきたあなたの中には、静かな知恵が育っていますよ。",
+      "本とは友のようなものです。何度でも語り合ってくださいね。",
+      "頁をめくる音は、心が成長する音なのです。",
     ],
   },
   {
@@ -95,9 +95,9 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#E6D09E",
     glow3: "#EAD5AB",
     kingComments: [
-      "剣を取るように本を取れ。知は最も鋭き刃となる。",
-      "読むことを恐れぬ者だけが、物語の核心にたどり着ける。",
-      "一冊の本は、千の経験に値することもある。",
+      "剣を取るように、本を手に取ってみてください。知恵は最も鋭い刃となりますよ。",
+      "読むことを恐れない人だけが、物語の核心にたどり着けるのです。",
+      "一冊の本が、千の経験に値することもあるのですよ。",
     ],
   },
   {
@@ -108,9 +108,9 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#CDDBDC",
     glow3: "#D2DEDE",
     kingComments: [
-      "静かなる水脈のように、知識は深く流れ続けるものだ。",
-      "読み終えた本の数だけ、汝は違う自分になっている。",
-      "本を閉じた後にこそ、本当の読書が始まる。",
+      "静かな水脈のように、知識は深く流れ続けていくものです。",
+      "読み終えた本の数だけ、あなたは違う自分になっているはずですよ。",
+      "本を閉じた後にこそ、本当の読書が始まるのです。",
     ],
   },
   {
@@ -121,9 +121,9 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#E6AE92",
     glow3: "#EAC0A4",
     kingComments: [
-      "灼熱の情熱をもって読み進める者に、道は開かれる。",
-      "汝はもはや、物語を読む者ではなく、物語を生きる者だ。",
-      "知の炎は、汝の内に燃え続けておる。",
+      "灼熱の情熱を持って読み進める人にこそ、道は開かれていきますよ。",
+      "あなたはもう、物語を読む人ではなく、物語を生きる人なのです。",
+      "知恵の炎は、あなたの内でずっと燃え続けていますよ。",
     ],
   },
   {
@@ -134,9 +134,9 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#CEBDDB",
     glow3: "#D4C5DF",
     kingComments: [
-      "汝はついに、言葉の深淵を覗く者となった。",
-      "読書神よ、汝の物語もまた、誰かの一冊となるだろう。",
-      "これ以上の高みはない。ただ、読み続けよ。",
+      "あなたはついに、言葉の深淵を覗く者となりました。",
+      "読書神さん、あなたの物語もまた、いつか誰かの一冊となることでしょう。",
+      "これ以上の高みはありません。ただ、読み続けてくださいね。",
     ],
   },
 ];
@@ -155,6 +155,73 @@ export function getKingComment(level: number): string {
   const zone = getDungeonZone(level);
   const index = level % zone.kingComments.length;
   return zone.kingComments[index];
+}
+
+export type IllustrationTier = {
+  from: number;
+  to: number;
+  equipmentName: string;
+  image: string;
+};
+
+// ChatGPTで生成したイラストが揃った帯だけをここに追加していく。
+// 対応する画像がまだない帯は、従来のドット絵にフォールバックする。
+// 区切りは称号の節目（TITLE_MILESTONES）と揃えている。
+export const ILLUSTRATION_TIERS: IllustrationTier[] = [
+  {
+    from: 1,
+    to: 8,
+    equipmentName: "見習いの外套",
+    image: "/characters/tier-01.png",
+  },
+  {
+    from: 9,
+    to: 16,
+    equipmentName: "革表紙の書",
+    image: "/characters/tier-02.png",
+  },
+  {
+    from: 17,
+    to: 24,
+    equipmentName: "探検者のフード",
+    image: "/characters/tier-03.png",
+  },
+  {
+    from: 25,
+    to: 32,
+    equipmentName: "知識の魔導書",
+    image: "/characters/tier-04.png",
+  },
+  {
+    from: 33,
+    to: 41,
+    equipmentName: "鋼の短剣",
+    image: "/characters/tier-05.png",
+  },
+  {
+    from: 42,
+    to: 49,
+    equipmentName: "伝承の盾",
+    image: "/characters/tier-06.png",
+  },
+  {
+    from: 50,
+    to: 57,
+    equipmentName: "蒼き騎士剣",
+    image: "/characters/tier-07.png",
+  },
+  {
+    from: 58,
+    to: 65,
+    equipmentName: "賢者の杖",
+    image: "/characters/tier-08.png",
+  },
+];
+
+export function getIllustrationForLevel(level: number): IllustrationTier | null {
+  return (
+    ILLUSTRATION_TIERS.find((t) => level >= t.from && level <= t.to) ?? null
+  );
 }
 
 export type CharacterProgress = {
