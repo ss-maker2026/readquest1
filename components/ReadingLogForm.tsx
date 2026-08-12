@@ -77,7 +77,7 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="animate-slide-down space-y-6 rounded-2xl border border-ink/[0.06] bg-white p-6 shadow-sm shadow-ink/5 sm:p-7"
+      className="animate-slide-down space-y-6 rounded-2xl border border-gold/25 bg-gold-soft p-6 shadow-sm shadow-ink/5 sm:p-7"
     >
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5 sm:col-span-2">

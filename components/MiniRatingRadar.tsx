@@ -14,7 +14,7 @@ const SIZE_CLASSES: Record<"md" | "lg", string> = {
 
 const SIZE = 220;
 const CENTER = SIZE / 2;
-const RADIUS = 42;
+const RADIUS = 50;
 const LEVELS = 5;
 const AXIS_COUNT = RATING_CRITERIA.length;
 const LABEL_OFFSET = 20;

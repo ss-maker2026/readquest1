@@ -19,12 +19,12 @@ export default function ReadingCharacter({ count }: Props) {
 
   return (
     <div className="mb-8 overflow-hidden rounded-2xl border-2 border-glow-gold/50 bg-black/35 shadow-sm shadow-ink/5 backdrop-blur-sm">
-      <div className="flex items-baseline gap-2.5 border-b border-glow-gold/25 px-5 py-2.5">
-        <span className="shrink-0 text-[10px] font-semibold tracking-wide text-glow-gold">
-          {quote.author}
-        </span>
-        <span className="min-w-0 text-xs leading-relaxed text-glow-gold/70">
+      <div className="border-b border-glow-gold/25 px-5 py-2.5">
+        <span className="text-xs leading-relaxed text-glow-gold/70">
           「{quote.text}」
+        </span>
+        <span className="ml-1.5 text-[10px] font-semibold tracking-wide text-glow-gold">
+          ―{quote.author}
         </span>
       </div>
 

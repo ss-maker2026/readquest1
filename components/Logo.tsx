@@ -99,7 +99,10 @@ export default function Logo() {
         px={3}
         className="h-11 w-auto shrink-0 sm:h-14"
       />
-      <h1 className="whitespace-nowrap text-2xl font-bold tracking-wide text-gold sm:text-3xl">
+      <h1
+        className="whitespace-nowrap text-2xl font-bold tracking-wide text-gold sm:text-3xl"
+        style={{ transform: "translateX(1mm)" }}
+      >
         読書クエスト
       </h1>
       <PixelIcon

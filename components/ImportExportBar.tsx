@@ -50,7 +50,7 @@ export default function ImportExportBar({ logs, onImport }: Props) {
 
   return (
     <div className="fixed right-3 top-3 z-20 flex flex-col items-end gap-1.5 sm:right-5 sm:top-5">
-      <div className="flex flex-col items-end gap-1.5 sm:flex-row">
+      <div className="flex items-center justify-end gap-1.5">
         <button
           type="button"
           onClick={handleExport}

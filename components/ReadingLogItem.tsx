@@ -35,10 +35,8 @@ export default function ReadingLogItem({
   return (
     <li
       ref={liRef}
-      className={`group animate-fade-in relative rounded-2xl border bg-white p-4 shadow-sm shadow-ink/5 transition-all hover:shadow-md hover:shadow-ink/[0.06] sm:p-5 ${
-        highlighted
-          ? "border-accent ring-2 ring-accent/40"
-          : "border-ink/[0.06]"
+      className={`group animate-fade-in relative rounded-2xl border bg-gold-soft p-4 shadow-sm shadow-ink/5 transition-all hover:shadow-md hover:shadow-ink/[0.06] sm:p-5 ${
+        highlighted ? "border-accent ring-2 ring-accent/40" : "border-gold/25"
       }`}
     >
       <div className="absolute right-3 top-3 flex items-center gap-1 opacity-0 transition-all group-hover:opacity-100 focus-within:opacity-100">
