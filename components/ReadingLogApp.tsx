@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { BookLog } from "@/lib/types";
+import { averageRating, type BookLog } from "@/lib/types";
 import ReadingLogForm, { type NewBookLog } from "@/components/ReadingLogForm";
 import ReadingLogItem from "@/components/ReadingLogItem";
 import ReadingCharacter from "@/components/ReadingCharacter";
@@ -17,6 +17,7 @@ import {
 const STORAGE_KEY = "reading-log-app:logs";
 
 type FormState = { mode: "create" } | { mode: "edit"; log: BookLog } | null;
+type SortOption = "date-desc" | "date-asc" | "rating-desc" | "rating-asc";
 
 const sortLogs = (list: BookLog[]) =>
   [...list].sort((a, b) =>
@@ -25,12 +26,41 @@ const sortLogs = (list: BookLog[]) =>
       : b.finishedDate.localeCompare(a.finishedDate)
   );
 
+// 一覧表示用の並び替え・絞り込み。平均点は星評価未入力の本には存在しないため、
+// 平均点順のときは未評価の本を常に末尾へ回す。
+const getDisplayedLogs = (
+  list: BookLog[],
+  sortOption: SortOption,
+  minRating: number | null
+) => {
+  const filtered =
+    minRating === null
+      ? list
+      : list.filter((log) => {
+          const avg = averageRating(log.ratings);
+          return avg !== null && avg >= minRating;
+        });
+
+  if (sortOption === "date-desc") return sortLogs(filtered);
+  if (sortOption === "date-asc") return sortLogs(filtered).reverse();
+
+  const rated = filtered.filter((log) => averageRating(log.ratings) !== null);
+  const unrated = filtered.filter((log) => averageRating(log.ratings) === null);
+  rated.sort((a, b) => {
+    const diff = (averageRating(a.ratings) ?? 0) - (averageRating(b.ratings) ?? 0);
+    return sortOption === "rating-desc" ? -diff : diff;
+  });
+  return [...rated, ...unrated];
+};
+
 export default function ReadingLogApp() {
   const [logs, setLogs] = useState<BookLog[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [formState, setFormState] = useState<FormState>(null);
   const [previewLevel, setPreviewLevel] = useState<number | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(null);
+  const [sortOption, setSortOption] = useState<SortOption>("date-desc");
+  const [minRating, setMinRating] = useState<number | null>(null);
 
   useEffect(() => {
     try {
@@ -107,6 +137,8 @@ export default function ReadingLogApp() {
     });
   };
 
+  const displayedLogs = getDisplayedLogs(logs, sortOption, minRating);
+
   return (
     <div className="space-y-5">
       <ImportExportBar logs={logs} onImport={importLogs} />
@@ -169,17 +201,58 @@ export default function ReadingLogApp() {
           まだ記録がありません
         </p>
       ) : (
-        <ul className="space-y-4">
-          {logs.map((log) => (
-            <ReadingLogItem
-              key={log.id}
-              log={log}
-              onEdit={(target) => setFormState({ mode: "edit", log: target })}
-              onDelete={deleteLog}
-              highlighted={log.id === highlightId}
-            />
-          ))}
-        </ul>
+        <>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-dashed border-glow-gold/40 bg-black/35 px-4 py-3 text-xs">
+            <label className="flex items-center gap-2">
+              <span className="font-semibold text-glow-gold">並び替え</span>
+              <select
+                value={sortOption}
+                onChange={(e) => setSortOption(e.target.value as SortOption)}
+                className="rounded-full border border-glow-gold/30 bg-black/40 px-2.5 py-1 text-[11px] text-glow-gold/80 outline-none"
+              >
+                <option value="date-desc">読了日が新しい順</option>
+                <option value="date-asc">読了日が古い順</option>
+                <option value="rating-desc">平均点が高い順</option>
+                <option value="rating-asc">平均点が低い順</option>
+              </select>
+            </label>
+            <div className="flex items-center gap-1.5">
+              <span className="font-semibold text-glow-gold">絞り込み</span>
+              {[null, 3, 4, 5].map((v) => (
+                <button
+                  key={String(v)}
+                  type="button"
+                  onClick={() => setMinRating(v)}
+                  className={`rounded-full border px-2.5 py-1 text-[11px] transition-colors ${
+                    minRating === v
+                      ? "border-glow-gold text-glow-gold"
+                      : "border-glow-gold/25 text-glow-gold/50 hover:border-glow-gold/50"
+                  }`}
+                >
+                  {v === null ? "すべて" : `★${v}以上`}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {displayedLogs.length === 0 ? (
+            <p className="py-16 text-center text-sm text-glow-gold/40">
+              条件に一致する記録がありません
+            </p>
+          ) : (
+            <ul className="space-y-4">
+              {displayedLogs.map((log) => (
+                <ReadingLogItem
+                  key={log.id}
+                  log={log}
+                  onEdit={(target) => setFormState({ mode: "edit", log: target })}
+                  onDelete={deleteLog}
+                  highlighted={log.id === highlightId}
+                />
+              ))}
+            </ul>
+          )}
+        </>
       )}
     </div>
   );

@@ -70,9 +70,9 @@ export default function ReadingLogItem({
         </button>
       </div>
 
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1 pr-1">
-          <h3 className="truncate font-serif text-lg font-medium text-ink sm:text-xl">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
+        <div className="min-w-0 w-full flex-1 pr-1 sm:w-auto">
+          <h3 className="break-words font-serif text-base font-medium leading-snug text-ink sm:text-lg">
             {log.title}
           </h3>
           {log.author && (
@@ -84,10 +84,10 @@ export default function ReadingLogItem({
               {formatDate(log.finishedDate)}読了
             </span>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="rounded-full bg-paper px-2.5 py-1 text-ink/55 ring-1 ring-inset ring-ink/10">
+              <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] text-ink/55 ring-1 ring-inset ring-ink/10">
                 {ACQUISITION_LABELS[log.acquisition]}
               </span>
-              <span className="rounded-full bg-paper px-2.5 py-1 text-ink/55 ring-1 ring-inset ring-ink/10">
+              <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] text-ink/55 ring-1 ring-inset ring-ink/10">
                 {FORMAT_LABELS[log.format]}
               </span>
               {log.shared && (
@@ -110,7 +110,7 @@ export default function ReadingLogItem({
           </div>
         </div>
 
-        <div style={{ marginLeft: "-2cm" }}>
+        <div className="self-center sm:ml-[-2cm] sm:self-auto">
           <MiniRatingRadar ratings={log.ratings} size="lg" />
         </div>
       </div>

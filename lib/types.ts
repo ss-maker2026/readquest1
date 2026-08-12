@@ -40,6 +40,13 @@ export type BookLog = {
   ratings?: BookRatings;
 };
 
+// 6軸評価の平均点。未評価の場合はnullを返す。
+export function averageRating(ratings?: BookRatings): number | null {
+  if (!ratings) return null;
+  const sum = RATING_CRITERIA.reduce((acc, c) => acc + (ratings[c.key] ?? 0), 0);
+  return sum / RATING_CRITERIA.length;
+}
+
 export const ACQUISITION_LABELS: Record<AcquisitionMethod, string> = {
   purchase: "購入",
   rental: "レンタル",
