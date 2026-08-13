@@ -38,6 +38,9 @@ export type BookLog = {
   createdAt: number;
   // 既存データとの互換性のため任意項目にしている。
   ratings?: BookRatings;
+  // 読書クエストの詳細情報（任意項目、既存データとの互換性のため後から追加）。
+  pages?: number;
+  startDate?: string;
 };
 
 // 6軸評価の平均点。未評価の場合はnullを返す。

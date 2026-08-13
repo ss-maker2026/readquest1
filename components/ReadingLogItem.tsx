@@ -39,11 +39,11 @@ export default function ReadingLogItem({
         highlighted ? "border-accent ring-2 ring-accent/40" : "border-gold/25"
       }`}
     >
-      <div className="absolute right-3 top-3 flex items-center gap-1 opacity-0 transition-all group-hover:opacity-100 focus-within:opacity-100">
+      <div className="absolute right-3 top-3 flex items-center gap-1 opacity-100 transition-all sm:opacity-0 sm:group-hover:opacity-100 sm:focus-within:opacity-100">
         <button
           type="button"
           onClick={() => onEdit(log)}
-          aria-label="この記録を編集"
+          aria-label="このクエストを編集"
           className="rounded-full p-1.5 text-ink/25 transition-all hover:bg-accent-soft hover:text-accent"
         >
           <svg viewBox="0 0 20 20" className="h-4 w-4 fill-none stroke-current stroke-[1.7]">
@@ -56,8 +56,12 @@ export default function ReadingLogItem({
         </button>
         <button
           type="button"
-          onClick={() => onDelete(log.id)}
-          aria-label="この記録を削除"
+          onClick={() => {
+            if (window.confirm(`「${log.title}」を削除しますか？この操作は取り消せません。`)) {
+              onDelete(log.id);
+            }
+          }}
+          aria-label="このクエストを削除"
           className="rounded-full p-1.5 text-ink/25 transition-all hover:bg-red-50 hover:text-red-400"
         >
           <svg viewBox="0 0 20 20" className="h-4 w-4 fill-none stroke-current stroke-[1.7]">
@@ -81,7 +85,8 @@ export default function ReadingLogItem({
 
           <div className="mt-2 flex flex-col gap-1 text-xs">
             <span className="w-fit rounded-full bg-accent-soft px-2.5 py-1 font-medium text-accent">
-              {formatDate(log.finishedDate)}読了
+              {log.startDate && `${formatDate(log.startDate)}〜`}
+              {formatDate(log.finishedDate)} クエストクリア
             </span>
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] text-ink/55 ring-1 ring-inset ring-ink/10">
@@ -90,6 +95,11 @@ export default function ReadingLogItem({
               <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] text-ink/55 ring-1 ring-inset ring-ink/10">
                 {FORMAT_LABELS[log.format]}
               </span>
+              {log.pages !== undefined && (
+                <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] text-ink/55 ring-1 ring-inset ring-ink/10">
+                  {log.pages.toLocaleString()}ページ
+                </span>
+              )}
               {log.shared && (
                 <span className="flex items-center gap-1 rounded-full bg-gold-soft px-2.5 py-1 text-gold">
                   <svg viewBox="0 0 20 20" className="h-3 w-3 fill-current">

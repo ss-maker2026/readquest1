@@ -45,16 +45,19 @@ export default function ImportExportBar({ logs, onImport }: Props) {
         showMessage("CSVの読み込みに失敗しました");
       }
     };
+    reader.onerror = () => {
+      showMessage("CSVの読み込みに失敗しました");
+    };
     reader.readAsText(file, "utf-8");
   };
 
   return (
-    <div className="fixed right-3 top-3 z-20 flex flex-col items-end gap-1.5 sm:right-5 sm:top-5">
-      <div className="flex items-center justify-end gap-1.5">
+    <div className="flex flex-col items-start gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         <button
           type="button"
           onClick={handleExport}
-          className="flex items-center gap-1 rounded-full border border-glow-gold/40 bg-black/35 px-2.5 py-1.5 text-[11px] text-glow-gold/60 shadow-sm backdrop-blur-sm transition-colors hover:border-glow-gold hover:bg-black/50 hover:text-glow-gold"
+          className="flex items-center gap-1.5 rounded-full border border-glow-gold/40 bg-black/35 px-3 py-2 text-xs text-glow-gold/70 shadow-sm backdrop-blur-sm transition-colors hover:border-glow-gold hover:bg-black/50 hover:text-glow-gold"
         >
           <svg viewBox="0 0 20 20" className="h-3.5 w-3.5 fill-none stroke-current stroke-[1.7]">
             <path d="M10 3v9m0 0 3-3m-3 3-3-3M4 14v1.5A1.5 1.5 0 0 0 5.5 17h9a1.5 1.5 0 0 0 1.5-1.5V14" strokeLinecap="round" strokeLinejoin="round" />
@@ -64,7 +67,7 @@ export default function ImportExportBar({ logs, onImport }: Props) {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-1 rounded-full border border-glow-gold/40 bg-black/35 px-2.5 py-1.5 text-[11px] text-glow-gold/60 shadow-sm backdrop-blur-sm transition-colors hover:border-glow-gold hover:bg-black/50 hover:text-glow-gold"
+          className="flex items-center gap-1.5 rounded-full border border-glow-gold/40 bg-black/35 px-3 py-2 text-xs text-glow-gold/70 shadow-sm backdrop-blur-sm transition-colors hover:border-glow-gold hover:bg-black/50 hover:text-glow-gold"
         >
           <svg viewBox="0 0 20 20" className="h-3.5 w-3.5 fill-none stroke-current stroke-[1.7]">
             <path d="M10 12V3m0 0 3 3m-3-3-3 3M4 14v1.5A1.5 1.5 0 0 0 5.5 17h9a1.5 1.5 0 0 0 1.5-1.5V14" strokeLinecap="round" strokeLinejoin="round" />
@@ -80,7 +83,7 @@ export default function ImportExportBar({ logs, onImport }: Props) {
         />
       </div>
       {message && (
-        <p className="animate-fade-in rounded-full bg-ink/80 px-3 py-1 text-[11px] text-white shadow-sm">
+        <p className="animate-fade-in rounded-full border border-glow-gold/40 bg-black/80 px-3 py-1.5 text-xs text-glow-gold shadow-sm">
           {message}
         </p>
       )}

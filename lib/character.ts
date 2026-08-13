@@ -39,13 +39,18 @@ const TITLE_MILESTONES: [level: number, title: string][] = [
   [90, "読書神"],
 ];
 
-function titleForLevel(level: number): string {
+export function titleForLevel(level: number): string {
   let title = TITLE_MILESTONES[0][1];
   for (const [from, t] of TITLE_MILESTONES) {
     if (level >= from) title = t;
   }
   return title;
 }
+
+// 称号が切り替わるレベル一覧（新しい称号・装備が手に入る節目）。
+export const TITLE_MILESTONE_LEVELS: number[] = TITLE_MILESTONES.map(
+  ([level]) => level
+);
 
 export type DungeonZone = {
   from: number;
@@ -227,6 +232,21 @@ export function getDungeonZone(level: number): DungeonZone {
     if (level >= z.from) zone = z;
   }
   return zone;
+}
+
+// レベル（ダンジョンの深さ）に応じて、ページ全体の背景色を書き換える。
+// ホーム画面・キャラクター画面など、複数の画面から共通で呼び出せるように
+// 副作用（CSS変数の書き換え）をここに独立させている。
+export function applyDungeonZoneStyles(level: number): void {
+  const zone = getDungeonZone(level);
+  const root = document.documentElement.style;
+  root.setProperty("--dungeon-base", zone.base);
+  root.setProperty("--dungeon-glow1", zone.glow1);
+  root.setProperty("--dungeon-glow2", zone.glow2);
+  root.setProperty("--dungeon-glow3", zone.glow3);
+  root.setProperty("--mist-rgb", zone.textRgb);
+  root.setProperty("--glow-green-rgb", zone.accentRgb);
+  root.setProperty("--glow-gold-rgb", zone.goldRgb);
 }
 
 // レベル帯ごとに複数の格言を持たせ、帯の中でもレベルに応じて少しずつ

@@ -20,6 +20,8 @@ const CSV_COLUMNS = [
   "rating_learning",
   "rating_excitement",
   "rating_emotionalImpact",
+  "pages",
+  "startDate",
 ] as const;
 
 function csvEscape(value: string): string {
@@ -48,6 +50,8 @@ export function logsToCSV(logs: BookLog[]): string {
       r ? String(r.learning) : "",
       r ? String(r.excitement) : "",
       r ? String(r.emotionalImpact) : "",
+      log.pages !== undefined ? String(log.pages) : "",
+      log.startDate ?? "",
     ];
     return fields.map(csvEscape).join(",");
   });
@@ -169,6 +173,18 @@ export function csvToLogs(text: string): BookLog[] {
           }
         : undefined;
 
+      const pagesRaw = get("pages").trim();
+      const pagesNum = Number(pagesRaw);
+      const pages =
+        pagesRaw !== "" && Number.isFinite(pagesNum) && pagesNum > 0
+          ? Math.round(pagesNum)
+          : undefined;
+
+      const startDateRaw = get("startDate").trim();
+      const startDate = /^\d{4}-\d{2}-\d{2}$/.test(startDateRaw)
+        ? startDateRaw
+        : undefined;
+
       return {
         id: crypto.randomUUID(),
         title,
@@ -185,6 +201,8 @@ export function csvToLogs(text: string): BookLog[] {
         keepForever: get("keepForever").trim().toLowerCase() === "true",
         createdAt: Date.now() + i,
         ratings,
+        pages,
+        startDate,
       };
     })
     .filter((log): log is BookLog => log !== null);

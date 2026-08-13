@@ -24,6 +24,8 @@ export type NewBookLog = {
   shared: boolean;
   keepForever: boolean;
   ratings: BookRatings;
+  pages?: number;
+  startDate?: string;
 };
 
 type Props = {
@@ -49,6 +51,10 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
     initial?.acquisition ?? "purchase"
   );
   const [format, setFormat] = useState<BookFormat>(initial?.format ?? "paper");
+  const [pages, setPages] = useState(
+    initial?.pages !== undefined ? String(initial.pages) : ""
+  );
+  const [startDate, setStartDate] = useState(initial?.startDate ?? "");
   const [review, setReview] = useState(initial?.review ?? "");
   const [shared, setShared] = useState(initial?.shared ?? false);
   const [keepForever, setKeepForever] = useState(initial?.keepForever ?? false);
@@ -61,6 +67,9 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
     const trimmedTitle = title.trim();
     if (!trimmedTitle || !finishedDate) return;
 
+    const pagesNum = Number(pages);
+    const trimmedStartDate = startDate.trim();
+
     onSubmit({
       title: trimmedTitle,
       author: author.trim(),
@@ -71,6 +80,11 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
       shared,
       keepForever,
       ratings,
+      pages:
+        pages.trim() !== "" && Number.isFinite(pagesNum) && pagesNum > 0
+          ? Math.round(pagesNum)
+          : undefined,
+      startDate: trimmedStartDate !== "" ? trimmedStartDate : undefined,
     });
   };
 
@@ -79,10 +93,14 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
       onSubmit={handleSubmit}
       className="animate-slide-down space-y-6 rounded-2xl border border-gold/25 bg-gold-soft p-6 shadow-sm shadow-ink/5 sm:p-7"
     >
+      <h2 className="font-serif text-lg font-medium text-ink">
+        {isEditing ? "読書クエストを編集" : "新しい読書クエスト"}
+      </h2>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5 sm:col-span-2">
           <span className="text-xs font-medium tracking-wide text-ink/50">
-            書籍タイトル
+            本のタイトル
           </span>
           <input
             type="text"
@@ -111,7 +129,35 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
 
         <label className="flex flex-col gap-1.5">
           <span className="text-xs font-medium tracking-wide text-ink/50">
-            読み終えた日
+            ページ数（任意）
+          </span>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={1}
+            max={20000}
+            value={pages}
+            onChange={(e) => setPages(e.target.value)}
+            placeholder="例：320"
+            className="rounded-lg border border-ink/10 bg-paper/60 px-3.5 py-2.5 text-sm text-ink outline-none transition-colors focus:border-accent focus:bg-white focus:ring-2 focus:ring-accent/15"
+          />
+        </label>
+
+        <label className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium tracking-wide text-ink/50">
+            読書開始日（任意）
+          </span>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="rounded-lg border border-ink/10 bg-paper/60 px-3.5 py-2.5 text-sm text-ink outline-none transition-colors focus:border-accent focus:bg-white focus:ring-2 focus:ring-accent/15"
+          />
+        </label>
+
+        <label className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium tracking-wide text-ink/50">
+            読了日
           </span>
           <input
             type="date"
@@ -175,7 +221,7 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
 
       <label className="flex flex-col gap-1.5">
         <span className="text-xs font-medium tracking-wide text-ink/50">
-          感想
+          メモ
         </span>
         <textarea
           value={review}
@@ -225,9 +271,9 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
         <button
           type="submit"
           disabled={!title.trim()}
-          className="rounded-full bg-accent px-5 py-2 text-sm font-medium text-white shadow-sm shadow-accent/30 transition-all hover:bg-accent-light active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded-full bg-gold px-5 py-2 text-sm font-bold text-[#241F1A] shadow-sm transition-all hover:brightness-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {isEditing ? "更新する" : "記録する"}
+          {isEditing ? "更新する" : "クエストクリア"}
         </button>
       </div>
     </form>

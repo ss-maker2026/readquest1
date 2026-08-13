@@ -2,6 +2,10 @@
 
 import { Press_Start_2P } from "next/font/google";
 import { getCharacterProgress, getReadingQuote } from "@/lib/character";
+import { getXpProgress, getNextEquipmentReward } from "@/lib/levels";
+import { calculateTotalXpForBookCount } from "@/lib/xp";
+import { calculateStreak, getStreakMessage } from "@/lib/streak";
+import type { BookLog } from "@/lib/types";
 
 const pixelFont = Press_Start_2P({
   subsets: ["latin"],
@@ -10,46 +14,134 @@ const pixelFont = Press_Start_2P({
 });
 
 type Props = {
+  // 実際の記録数、またはレベルプレビュー中はプレビュー用の冊数。
   count: number;
+  // 「今日の読書」の判定に使う実データ（プレビューの影響を受けない）。
+  logs: BookLog[];
+  onStartQuest: () => void;
+  isAtMax: boolean;
+  // 記録の追加・編集フォームが開いている間は、クエスト開始ボタンを隠す。
+  formOpen: boolean;
 };
 
-export default function ReadingCharacter({ count }: Props) {
-  const { level, title, remaining, isMaxLevel } = getCharacterProgress(count);
+function todayStr() {
+  const d = new Date();
+  const offset = d.getTimezoneOffset();
+  return new Date(d.getTime() - offset * 60 * 1000).toISOString().slice(0, 10);
+}
+
+// ホーム画面の主役となるキャラクターカード。優先順位は上から
+// 1.キャラクター 2.レベル 3.キャラクター名 4.XP 5.次のレベルまで
+// 6.今日の読書 7.読書クエスト開始 8.次の報酬 9.今日の言葉、の順。
+export default function ReadingCharacter({
+  count,
+  logs,
+  onStartQuest,
+  isAtMax,
+  formOpen,
+}: Props) {
+  const { level, title, isMaxLevel } = getCharacterProgress(count);
   const quote = getReadingQuote(level);
+  const xpProgress = getXpProgress(calculateTotalXpForBookCount(count));
+  const nextReward = getNextEquipmentReward(level);
+  const todayCount = logs.filter((log) => log.finishedDate === todayStr()).length;
+  const streak = calculateStreak(logs);
+  const streakMessage = getStreakMessage(streak, logs.length > 0);
+
+  const xpBarPercent =
+    xpProgress.isMaxLevel || xpProgress.xpToNextLevel === null
+      ? 100
+      : Math.min(
+          100,
+          Math.round((xpProgress.xpIntoLevel / xpProgress.xpToNextLevel) * 100)
+        );
 
   return (
     <div className="mb-8 overflow-hidden rounded-2xl border-2 border-glow-gold/50 bg-black/35 shadow-sm shadow-ink/5 backdrop-blur-sm">
-      <div className="border-b border-glow-gold/25 px-5 py-2.5">
-        <span className="text-xs leading-relaxed text-glow-gold/70">
-          「{quote.text}」
-        </span>
-        <span className="ml-1.5 text-[10px] font-semibold tracking-wide text-glow-gold">
-          ―{quote.author}
-        </span>
-      </div>
-
-      <div className="flex items-center justify-center gap-4 px-6 py-6 sm:gap-6 sm:px-8">
-        <div className="shrink-0 rounded-md border-[3px] border-glow-gold bg-gradient-to-b from-[var(--dungeon-base)] to-[var(--dungeon-glow3)] p-2 shadow-[inset_0_0_0_2px_#0A0E22] transition-colors duration-700">
-          <CharacterAvatar level={level} />
+      <div className="flex flex-col items-center gap-3 px-6 py-7 text-center sm:px-8">
+        {/* 1. キャラクター */}
+        <div className="rounded-md border-[3px] border-glow-gold bg-gradient-to-b from-[var(--dungeon-base)] to-[var(--dungeon-glow3)] p-3 shadow-[inset_0_0_0_2px_#0A0E22] transition-colors duration-700">
+          <CharacterAvatar level={level} className="h-48 w-44" />
         </div>
 
-        <div className="flex min-w-0 flex-col items-start pt-1 text-left">
-          <p
-            className={`${pixelFont.className} whitespace-nowrap text-xs tracking-tight text-glow-green sm:text-base`}
-          >
-            Lv.{level}
-            <span className="text-glow-gold/30"> / 99</span>
-          </p>
-          <p className="mt-2 whitespace-nowrap font-serif text-lg font-medium text-glow-gold sm:text-2xl">
-            {title}
-          </p>
-          <p className="mt-3 text-sm text-glow-gold/50">
-            {count.toLocaleString()}冊読了
-          </p>
-          <p className="mt-1 text-sm text-glow-gold/40">
+        {/* 2. レベル */}
+        <p
+          className={`${pixelFont.className} mt-1 text-4xl tracking-tight text-glow-green`}
+        >
+          Lv.{level}
+        </p>
+
+        {/* 3. キャラクター名（称号） */}
+        <p className="font-serif text-xl font-medium text-glow-gold">
+          {title}
+        </p>
+
+        {/* 4〜5. XP・進捗バー・次のレベルまで */}
+        <div className="mt-1 w-full max-w-xs">
+          <div className="flex items-baseline justify-between">
+            <span className="text-[11px] font-semibold tracking-wide text-glow-gold/70">
+              EXP
+            </span>
+            <span className="text-sm font-medium text-glow-gold/90">
+              {xpProgress.xpIntoLevel.toLocaleString()}
+              {xpProgress.xpToNextLevel !== null &&
+                ` / ${xpProgress.xpToNextLevel.toLocaleString()}`}{" "}
+              XP
+            </span>
+          </div>
+          <div className="mt-1.5 h-2.5 w-full overflow-hidden rounded-full border border-glow-gold/25 bg-black/40">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-glow-green to-glow-gold transition-all duration-500"
+              style={{ width: `${xpBarPercent}%` }}
+            />
+          </div>
+          <p className="mt-1.5 text-xs text-glow-gold/60">
             {isMaxLevel
               ? "最高レベルに到達しました"
-              : `次のレベルまであと${remaining.toLocaleString()}冊`}
+              : `次のレベルまであと${xpProgress.remainingXp.toLocaleString()} XP`}
+          </p>
+        </div>
+
+        {/* 6. 今日の読書 */}
+        <div className="mt-2 flex flex-col items-center gap-1">
+          <p className="text-xs text-glow-gold/60">
+            今日の読書：
+            {todayCount > 0 ? `${todayCount}冊読了` : "まだ記録がありません"}
+          </p>
+          <p className="text-xs font-semibold text-glow-gold">
+            {streakMessage}
+          </p>
+        </div>
+
+        {/* 7. 読書クエスト開始 */}
+        {formOpen ? null : isAtMax ? (
+          <p className="mt-1 w-full max-w-xs rounded-full border border-dashed border-glow-gold/40 bg-black/30 py-2.5 text-center text-xs font-medium text-glow-gold/40">
+            上限に達しました
+          </p>
+        ) : (
+          <button
+            type="button"
+            onClick={onStartQuest}
+            className="mt-1 w-full max-w-xs rounded-full bg-glow-gold py-2.5 text-sm font-bold text-[#241F1A] shadow-sm transition-transform active:scale-95 hover:brightness-110"
+          >
+            ＋ 新しい読書クエスト
+          </button>
+        )}
+
+        {/* 8. 次の報酬 */}
+        <p className="text-[11px] text-glow-gold/50">
+          {nextReward
+            ? `次の報酬：${nextReward.equipmentName}（Lv.${nextReward.level}〜）`
+            : "すべての装備を手に入れました"}
+        </p>
+
+        {/* 9. 今日の言葉 */}
+        <div className="mt-2 w-full border-t border-glow-gold/15 pt-3">
+          <p className="text-[10px] font-semibold tracking-wide text-glow-gold/50">
+            今日の言葉
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-glow-gold/50">
+            「{quote.text}」<span className="ml-1">―{quote.author}</span>
           </p>
         </div>
       </div>
@@ -353,7 +445,13 @@ function outlineFor(blocks: Block[]): Block[] {
   return outline;
 }
 
-function CharacterAvatar({ level }: { level: number }) {
+export function CharacterAvatar({
+  level,
+  className,
+}: {
+  level: number;
+  className?: string;
+}) {
   const blocks = buildSprite(level);
   const outline = outlineFor(blocks);
   const shadow: Block[] = [{ x: 8, y: 32, w: 12, h: 2, fill: "#141B3D" }];
@@ -361,7 +459,7 @@ function CharacterAvatar({ level }: { level: number }) {
   return (
     <svg
       viewBox={`0 0 ${GRID_W * PX} ${GRID_H * PX}`}
-      className="h-40 w-36"
+      className={className ?? "h-40 w-36"}
       shapeRendering="crispEdges"
     >
       {shadow.map((b, i) => (
