@@ -8,7 +8,6 @@ import CharacterIllustration from "@/components/CharacterIllustration";
 import { loadStoredLogs } from "@/lib/storage";
 import { getCharacterProgress, applyDungeonZoneStyles } from "@/lib/character";
 import { getLevelInfo, EQUIPMENT_TIERS } from "@/lib/levels";
-import { calculateTotalXpForBookCount } from "@/lib/xp";
 import type { BookLog } from "@/lib/types";
 
 const pixelFont = Press_Start_2P({
@@ -29,8 +28,6 @@ export default function CharacterPage() {
   }, []);
 
   const totalBooks = logs.length;
-  const totalPages = logs.reduce((sum, log) => sum + (log.pages ?? 0), 0);
-  const totalXp = calculateTotalXpForBookCount(totalBooks);
   const { level } = getCharacterProgress(totalBooks);
   const info = getLevelInfo(level);
 
@@ -74,27 +71,6 @@ export default function CharacterPage() {
             <div className="mt-1 flex flex-col gap-0.5 text-sm text-glow-gold/70">
               <p>称号：{info.title}</p>
               <p>現在の装備：{info.equipmentName}</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-px border-t border-glow-gold/20 bg-glow-gold/10 text-center">
-            <div className="bg-black/40 px-3 py-4">
-              <p className="text-lg font-bold text-glow-gold">
-                {totalBooks.toLocaleString()}
-              </p>
-              <p className="text-[11px] text-glow-gold/60">累計読了冊数</p>
-            </div>
-            <div className="bg-black/40 px-3 py-4">
-              <p className="text-lg font-bold text-glow-gold">
-                {totalPages.toLocaleString()}
-              </p>
-              <p className="text-[11px] text-glow-gold/60">累計ページ数</p>
-            </div>
-            <div className="bg-black/40 px-3 py-4">
-              <p className="text-lg font-bold text-glow-gold">
-                {totalXp.toLocaleString()}
-              </p>
-              <p className="text-[11px] text-glow-gold/60">累計XP</p>
             </div>
           </div>
         </div>
