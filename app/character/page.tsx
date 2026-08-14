@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Press_Start_2P } from "next/font/google";
 import Logo from "@/components/Logo";
 import AppNav from "@/components/AppNav";
-import { CharacterAvatar } from "@/components/ReadingCharacter";
+import CharacterIllustration from "@/components/CharacterIllustration";
 import { loadStoredLogs } from "@/lib/storage";
 import { getCharacterProgress, applyDungeonZoneStyles } from "@/lib/character";
 import { getLevelInfo, EQUIPMENT_TIERS } from "@/lib/levels";
@@ -24,10 +24,9 @@ const pixelFont = Press_Start_2P({
 });
 
 // キャラクターの成長状況をまとめて確認できる専用画面。
-// 画像はキャラクターカードやレベルアップ演出と同じ、常に全レベルぶん
-// 用意されているドット絵（CharacterAvatar）を使う。これにより、
-// レベルごとの画像ファイルが揃っていなくても表示が欠けたり
-// クラッシュしたりすることがない（安全なフォールバックが常に存在する）。
+// 画像はホーム画面のキャラクターカードやレベルアップ演出と同じ
+// CharacterIllustrationを使う。装備帯ごとのイラストが読み込めない
+// 場合は、常に全レベルぶん表示できるドット絵に自動フォールバックする。
 export default function CharacterPage() {
   const [logs, setLogs] = useState<BookLog[]>([]);
   const [selectedTitleId, setSelectedTitleId] = useState<string | null>(null);
@@ -84,9 +83,10 @@ export default function CharacterPage() {
 
         <div className="overflow-hidden rounded-2xl border-2 border-glow-gold/50 bg-black/35 shadow-sm shadow-ink/5 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-2 px-6 py-8 text-center sm:px-8">
-            <div className="rounded-md border-[3px] border-glow-gold bg-gradient-to-b from-[var(--dungeon-base)] to-[var(--dungeon-glow3)] p-4 shadow-[inset_0_0_0_2px_#0A0E22] transition-colors duration-700">
-              <CharacterAvatar level={level} className="h-56 w-52" />
-            </div>
+            <CharacterIllustration
+              level={level}
+              className="w-full max-w-sm overflow-hidden rounded-md border-[3px] border-glow-gold bg-gradient-to-b from-[var(--dungeon-base)] to-[var(--dungeon-glow3)] shadow-[inset_0_0_0_2px_#0A0E22] transition-colors duration-700"
+            />
 
             <p
               className={`${pixelFont.className} mt-2 text-4xl tracking-tight text-glow-green`}

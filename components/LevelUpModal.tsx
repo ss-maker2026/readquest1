@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { titleForLevel } from "@/lib/character";
 import { getLevelInfo } from "@/lib/levels";
-import { CharacterAvatar } from "@/components/ReadingCharacter";
+import CharacterIllustration from "@/components/CharacterIllustration";
 
 type Props = {
   fromLevel: number;
@@ -40,7 +40,7 @@ export default function LevelUpModal({ fromLevel, toLevel, onContinue }: Props) 
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="flex w-full max-w-sm flex-col items-center gap-2 rounded-2xl border-2 border-glow-gold bg-gradient-to-b from-[var(--dungeon-base)] to-[var(--dungeon-glow3)] px-6 py-8 text-center shadow-2xl"
+        className="flex w-full max-w-md flex-col items-center gap-2 rounded-2xl border-2 border-glow-gold bg-gradient-to-b from-[var(--dungeon-base)] to-[var(--dungeon-glow3)] px-6 py-8 text-center shadow-2xl"
       >
         <p
           className="animate-fade-in text-2xl font-bold tracking-wide text-glow-gold [animation-fill-mode:backwards]"
@@ -86,12 +86,11 @@ export default function LevelUpModal({ fromLevel, toLevel, onContinue }: Props) 
           </div>
         </div>
 
-        <div
-          className="animate-fade-in mt-2 rounded-md border-[3px] border-glow-gold bg-gradient-to-b from-[var(--dungeon-base)] to-[var(--dungeon-glow3)] p-3 shadow-[inset_0_0_0_2px_#0A0E22] [animation-fill-mode:backwards]"
+        <CharacterIllustration
+          level={toLevel}
+          className="animate-fade-in mt-2 w-full overflow-hidden rounded-md border-[3px] border-glow-gold bg-gradient-to-b from-[var(--dungeon-base)] to-[var(--dungeon-glow3)] shadow-[inset_0_0_0_2px_#0A0E22] [animation-fill-mode:backwards]"
           style={{ animationDelay: "450ms" }}
-        >
-          <CharacterAvatar level={toLevel} className="h-40 w-36" />
-        </div>
+        />
 
         {equipmentChanged && (
           <div

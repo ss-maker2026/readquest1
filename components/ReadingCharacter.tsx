@@ -4,6 +4,7 @@ import { Press_Start_2P } from "next/font/google";
 import { getCharacterProgress } from "@/lib/character";
 import { getXpProgress, getNextEquipmentReward } from "@/lib/levels";
 import { calculateTotalXpForBookCount } from "@/lib/xp";
+import CharacterIllustration from "@/components/CharacterIllustration";
 
 const pixelFont = Press_Start_2P({
   subsets: ["latin"],
@@ -21,8 +22,8 @@ type Props = {
 };
 
 // ホーム画面の主役となるキャラクターカード。優先順位は上から
-// 1.レベル 2.キャラクター名 3.XP 4.次のレベルまで
-// 5.読書クエスト開始 6.次の報酬、の順。
+// 1.キャラクター 2.レベル 3.キャラクター名 4.XP 5.次のレベルまで
+// 6.読書クエスト開始 7.次の報酬、の順。
 export default function ReadingCharacter({
   count,
   onStartQuest,
@@ -44,19 +45,22 @@ export default function ReadingCharacter({
   return (
     <div className="mb-8 overflow-hidden rounded-2xl border-2 border-glow-gold/50 bg-black/35 shadow-sm shadow-ink/5 backdrop-blur-sm">
       <div className="flex flex-col items-center gap-3 px-6 py-7 text-center sm:px-8">
-        {/* 1. レベル */}
+        {/* 1. キャラクター */}
+        <CharacterIllustration level={level} />
+
+        {/* 2. レベル */}
         <p
           className={`${pixelFont.className} mt-1 text-4xl tracking-tight text-glow-green`}
         >
           Lv.{level}
         </p>
 
-        {/* 2. キャラクター名（称号） */}
+        {/* 3. キャラクター名（称号） */}
         <p className="font-serif text-xl font-medium text-glow-gold">
           {title}
         </p>
 
-        {/* 3〜4. XP・進捗バー・次のレベルまで */}
+        {/* 4〜5. XP・進捗バー・次のレベルまで */}
         <div className="mt-1 w-full max-w-xs">
           <div className="flex items-baseline justify-between">
             <span className="text-[11px] font-semibold tracking-wide text-glow-gold/70">
@@ -82,7 +86,7 @@ export default function ReadingCharacter({
           </p>
         </div>
 
-        {/* 5. 読書クエスト開始 */}
+        {/* 6. 読書クエスト開始 */}
         {formOpen ? null : isAtMax ? (
           <p className="mt-1 w-full max-w-xs rounded-full border border-dashed border-glow-gold/40 bg-black/30 py-2.5 text-center text-xs font-medium text-glow-gold/40">
             上限に達しました
@@ -97,7 +101,7 @@ export default function ReadingCharacter({
           </button>
         )}
 
-        {/* 6. 次の報酬 */}
+        {/* 7. 次の報酬 */}
         <p className="text-[11px] text-glow-gold/50">
           {nextReward
             ? `次の報酬：${nextReward.equipmentName}（Lv.${nextReward.level}〜）`

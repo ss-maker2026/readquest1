@@ -4,12 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import AppNav from "@/components/AppNav";
-import { loadStoredLogs } from "@/lib/storage";
+import ReadingLogForm, { type NewBookLog } from "@/components/ReadingLogForm";
+import ReadingLogItem from "@/components/ReadingLogItem";
+import { LOGS_STORAGE_KEY, loadStoredLogs } from "@/lib/storage";
 import { getCharacterProgress, applyDungeonZoneStyles } from "@/lib/character";
-import { calculateBookXp, calculateTotalXpForBookCount } from "@/lib/xp";
-import type { BookLog } from "@/lib/types";
+import { calculateTotalXpForBookCount } from "@/lib/xp";
+import { averageRating, type BookLog } from "@/lib/types";
 
-type SortOption = "date-desc" | "date-asc";
+type SortOption = "date-desc" | "date-asc" | "rating-desc" | "rating-asc";
 
 const formatDate = (value: string) => {
   const [y, m, d] = value.split("-").map(Number);
@@ -17,13 +19,38 @@ const formatDate = (value: string) => {
   return `${y}年${m}月${d}日`;
 };
 
-const sortByDate = (list: BookLog[], option: SortOption) => {
-  const sorted = [...list].sort((a, b) =>
+const sortLogs = (list: BookLog[]) =>
+  [...list].sort((a, b) =>
     b.finishedDate === a.finishedDate
       ? b.createdAt - a.createdAt
       : b.finishedDate.localeCompare(a.finishedDate)
   );
-  return option === "date-desc" ? sorted : sorted.reverse();
+
+// 一覧表示用の並び替え・絞り込み。平均点は星評価未入力の本には存在しないため、
+// 平均点順のときは未評価の本を常に末尾へ回す。
+const getDisplayedLogs = (
+  list: BookLog[],
+  sortOption: SortOption,
+  minRating: number | null
+) => {
+  const filtered =
+    minRating === null
+      ? list
+      : list.filter((log) => {
+          const avg = averageRating(log.ratings);
+          return avg !== null && avg >= minRating;
+        });
+
+  if (sortOption === "date-desc") return sortLogs(filtered);
+  if (sortOption === "date-asc") return sortLogs(filtered).reverse();
+
+  const rated = filtered.filter((log) => averageRating(log.ratings) !== null);
+  const unrated = filtered.filter((log) => averageRating(log.ratings) === null);
+  rated.sort((a, b) => {
+    const diff = (averageRating(a.ratings) ?? 0) - (averageRating(b.ratings) ?? 0);
+    return sortOption === "rating-desc" ? -diff : diff;
+  });
+  return [...rated, ...unrated];
 };
 
 function currentYearMonth() {
@@ -31,17 +58,33 @@ function currentYearMonth() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
-// 「本棚」画面。読了した本を、実務的な記録一覧としてではなく
-// 「これまでの冒険の書庫」として振り返れるようにする。
-// ホーム画面の一覧（編集・削除・評価つき）とは目的が異なるため、
-// あえて別デザインの読み取り専用カードで表示している。
+type FormState = { log: BookLog } | null;
+
+// 「本棚」画面。読了した本を振り返るだけでなく、編集・削除・絞り込みといった
+// 記録の管理もここで行う（新規追加はホーム画面のキャラクターカードから行う）。
 export default function BookshelfPage() {
   const [logs, setLogs] = useState<BookLog[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [formState, setFormState] = useState<FormState>(null);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<SortOption>("date-desc");
+  const [minRating, setMinRating] = useState<number | null>(null);
 
   useEffect(() => {
     setLogs(loadStoredLogs());
+    setIsLoaded(true);
   }, []);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    window.localStorage.setItem(LOGS_STORAGE_KEY, JSON.stringify(logs));
+  }, [logs, isLoaded]);
+
+  useEffect(() => {
+    if (!highlightId) return;
+    const timer = window.setTimeout(() => setHighlightId(null), 2000);
+    return () => window.clearTimeout(timer);
+  }, [highlightId]);
 
   const { level } = getCharacterProgress(logs.length);
   useEffect(() => {
@@ -66,10 +109,23 @@ export default function BookshelfPage() {
     return { totalBooks, totalPages, totalXp, monthBooks, monthPages };
   }, [logs]);
 
-  const sortedLogs = useMemo(
-    () => sortByDate(logs, sortOption),
-    [logs, sortOption]
+  const displayedLogs = useMemo(
+    () => getDisplayedLogs(logs, sortOption, minRating),
+    [logs, sortOption, minRating]
   );
+
+  const updateLog = (id: string, entry: NewBookLog) => {
+    setLogs((prev) =>
+      sortLogs(prev.map((log) => (log.id === id ? { ...log, ...entry } : log)))
+    );
+    setFormState(null);
+    setHighlightId(id);
+  };
+
+  const deleteLog = (id: string) => {
+    setLogs((prev) => prev.filter((log) => log.id !== id));
+    setFormState((prev) => (prev?.log.id === id ? null : prev));
+  };
 
   return (
     <main className="flex min-h-dvh flex-col items-center px-4 pb-24 pt-12 sm:py-20 sm:pb-24">
@@ -125,6 +181,16 @@ export default function BookshelfPage() {
           </div>
         </div>
 
+        {formState && (
+          <div className="mb-6">
+            <ReadingLogForm
+              initial={formState.log}
+              onSubmit={(entry) => updateLog(formState.log.id, entry)}
+              onCancel={() => setFormState(null)}
+            />
+          </div>
+        )}
+
         {logs.length === 0 ? (
           <div className="rounded-2xl border-2 border-dashed border-glow-gold/30 bg-black/20 py-16 text-center">
             <p className="text-sm font-medium text-glow-gold/60">
@@ -142,68 +208,60 @@ export default function BookshelfPage() {
           </div>
         ) : (
           <>
-            <div className="mb-4 flex items-center justify-center gap-2 text-xs">
-              <span className="font-semibold text-glow-gold">並び替え</span>
-              <select
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value as SortOption)}
-                className="rounded-full border border-glow-gold/30 bg-black/40 px-2.5 py-1.5 text-xs text-glow-gold/80 outline-none"
-              >
-                <option value="date-desc">新しい順</option>
-                <option value="date-asc">古い順</option>
-              </select>
+            <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-dashed border-glow-gold/40 bg-black/35 px-4 py-3 text-xs">
+              <label className="flex items-center gap-2">
+                <span className="font-semibold text-glow-gold">並び替え</span>
+                <select
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value as SortOption)}
+                  className="rounded-full border border-glow-gold/30 bg-black/40 px-2.5 py-1.5 text-xs text-glow-gold/80 outline-none"
+                >
+                  <option value="date-desc">読了日が新しい順</option>
+                  <option value="date-asc">読了日が古い順</option>
+                  <option value="rating-desc">平均点が高い順</option>
+                  <option value="rating-asc">平均点が低い順</option>
+                </select>
+              </label>
+              <div className="flex items-center gap-1.5">
+                <span className="font-semibold text-glow-gold">絞り込み</span>
+                {[null, 3, 4, 5].map((v) => (
+                  <button
+                    key={String(v)}
+                    type="button"
+                    onClick={() => setMinRating(v)}
+                    className={`rounded-full border px-2.5 py-1.5 text-xs transition-colors ${
+                      minRating === v
+                        ? "border-glow-gold text-glow-gold"
+                        : "border-glow-gold/25 text-glow-gold/50 hover:border-glow-gold/50"
+                    }`}
+                  >
+                    {v === null ? "すべて" : `★${v}以上`}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <ul className="space-y-4">
-              {sortedLogs.map((log) => (
-                <BookshelfCard key={log.id} log={log} />
-              ))}
-            </ul>
+            {displayedLogs.length === 0 ? (
+              <p className="py-16 text-center text-sm text-glow-gold/40">
+                条件に一致する記録がありません
+              </p>
+            ) : (
+              <ul className="space-y-4">
+                {displayedLogs.map((log) => (
+                  <ReadingLogItem
+                    key={log.id}
+                    log={log}
+                    onEdit={(target) => setFormState({ log: target })}
+                    onDelete={deleteLog}
+                    highlighted={log.id === highlightId}
+                  />
+                ))}
+              </ul>
+            )}
           </>
         )}
       </div>
       <AppNav />
     </main>
-  );
-}
-
-function BookshelfCard({ log }: { log: BookLog }) {
-  const xp = calculateBookXp({ pages: log.pages });
-
-  return (
-    <li className="overflow-hidden rounded-2xl border-2 border-glow-gold/40 bg-black/30 shadow-sm">
-      <div className="flex items-start gap-3 border-b border-glow-gold/15 bg-glow-gold/5 px-5 py-3">
-        <span className="mt-0.5 shrink-0 text-lg">📖</span>
-        <div className="min-w-0 flex-1">
-          <h2 className="truncate font-serif text-lg font-medium text-glow-gold">
-            {log.title}
-          </h2>
-          {log.author && (
-            <p className="truncate text-sm text-glow-gold/50">{log.author}</p>
-          )}
-        </div>
-        <span className="shrink-0 rounded-full bg-glow-green/15 px-2.5 py-1 text-xs font-bold text-glow-green">
-          +{xp.toLocaleString()} XP
-        </span>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2 px-5 py-3 text-xs text-glow-gold/60">
-        <span className="rounded-full border border-glow-gold/20 px-2.5 py-1">
-          {log.startDate && `${formatDate(log.startDate)}〜`}
-          {formatDate(log.finishedDate)} クエストクリア
-        </span>
-        {log.pages !== undefined && (
-          <span className="rounded-full border border-glow-gold/20 px-2.5 py-1">
-            {log.pages.toLocaleString()}ページ
-          </span>
-        )}
-      </div>
-
-      {log.review && (
-        <p className="whitespace-pre-wrap border-t border-glow-gold/10 px-5 py-3 text-sm leading-relaxed text-glow-gold/70">
-          {log.review}
-        </p>
-      )}
-    </li>
   );
 }

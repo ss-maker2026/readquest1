@@ -36,8 +36,7 @@ export type EquipmentTier = {
 };
 
 // 装備名・キャラクター画像は、既存の称号の節目（TITLE_MILESTONES、12段階）と
-// 同じ区切りで割り当てている。画像は現状Lv.1〜65の8段階分しか用意できて
-// いないため、Lv.66以降はnullのままにしている（将来差し替え予定）。
+// 同じ区切りで割り当てている。Lv.1〜99の全12段階ぶんのイラストを用意済み。
 export const EQUIPMENT_TIERS: EquipmentTier[] = [
   { from: 1, equipmentName: "見習いの外套", characterImage: "/characters/tier-01.png" },
   { from: 9, equipmentName: "革表紙の書", characterImage: "/characters/tier-02.png" },
@@ -47,10 +46,10 @@ export const EQUIPMENT_TIERS: EquipmentTier[] = [
   { from: 42, equipmentName: "伝承の盾", characterImage: "/characters/tier-06.png" },
   { from: 50, equipmentName: "蒼き騎士剣", characterImage: "/characters/tier-07.png" },
   { from: 58, equipmentName: "賢者の杖", characterImage: "/characters/tier-08.png" },
-  { from: 66, equipmentName: "大賢者の法衣", characterImage: null },
-  { from: 74, equipmentName: "英雄の証", characterImage: null },
-  { from: 82, equipmentName: "無限の書架の鍵", characterImage: null },
-  { from: 90, equipmentName: "神々の叡智", characterImage: null },
+  { from: 66, equipmentName: "大賢者の法衣", characterImage: "/characters/tier-09.png" },
+  { from: 74, equipmentName: "英雄の証", characterImage: "/characters/tier-10.png" },
+  { from: 82, equipmentName: "無限の書架の鍵", characterImage: "/characters/tier-11.png" },
+  { from: 90, equipmentName: "神々の叡智", characterImage: "/characters/tier-12.png" },
 ];
 
 function equipmentForLevel(level: number) {
