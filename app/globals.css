@@ -26,9 +26,24 @@ body {
     radial-gradient(circle at 50% 100%, var(--dungeon-glow3) 0%, transparent 60%),
     radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(12, 19, 48, 0.16) 100%),
     var(--dungeon-base);
-  background-attachment: fixed;
+  /* background-attachment: fixed はスマートフォン（特にiOS Safari）で
+     スクロールのたびに背景全体を再描画させ、操作の反応が鈍く感じる
+     主要因になるため使わない。 */
   transition: background-color 0.8s ease;
   color: #565e63;
+}
+
+/* モバイルでタップ操作の反応を速くする。
+   touch-action: manipulation はダブルタップズームの判定待ちによる
+   タップ発火の遅延（最大300ms程度）をなくし、-webkit-tap-highlight-color
+   は標準のグレーのフラッシュ表示を消して操作の手応えをすっきりさせる。 */
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 ::selection {

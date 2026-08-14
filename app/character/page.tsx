@@ -9,12 +9,6 @@ import { loadStoredLogs } from "@/lib/storage";
 import { getCharacterProgress, applyDungeonZoneStyles } from "@/lib/character";
 import { getLevelInfo, EQUIPMENT_TIERS } from "@/lib/levels";
 import { calculateTotalXpForBookCount } from "@/lib/xp";
-import { ACHIEVEMENTS, getUnlockedAchievements } from "@/lib/achievements";
-import {
-  getCurrentTitle,
-  loadSelectedTitleId,
-  saveSelectedTitleId,
-} from "@/lib/titles";
 import type { BookLog } from "@/lib/types";
 
 const pixelFont = Press_Start_2P({
@@ -29,11 +23,9 @@ const pixelFont = Press_Start_2P({
 // 場合は、常に全レベルぶん表示できるドット絵に自動フォールバックする。
 export default function CharacterPage() {
   const [logs, setLogs] = useState<BookLog[]>([]);
-  const [selectedTitleId, setSelectedTitleId] = useState<string | null>(null);
 
   useEffect(() => {
     setLogs(loadStoredLogs());
-    setSelectedTitleId(loadSelectedTitleId());
   }, []);
 
   const totalBooks = logs.length;
@@ -41,20 +33,6 @@ export default function CharacterPage() {
   const totalXp = calculateTotalXpForBookCount(totalBooks);
   const { level } = getCharacterProgress(totalBooks);
   const info = getLevelInfo(level);
-
-  const playerStats = {
-    totalBooks,
-    level,
-    currentStreak: 0,
-    longestStreak: 0,
-  };
-  const unlockedAchievements = getUnlockedAchievements(playerStats);
-  const currentTitle = getCurrentTitle(playerStats, selectedTitleId);
-
-  const handleSelectTitle = (id: string) => {
-    setSelectedTitleId(id);
-    saveSelectedTitleId(id);
-  };
 
   useEffect(() => {
     applyDungeonZoneStyles(level);
@@ -93,16 +71,9 @@ export default function CharacterPage() {
             >
               Lv.{level}
             </p>
-            <p className="text-xl font-medium text-glow-gold">
-              {info.characterName}
-            </p>
             <div className="mt-1 flex flex-col gap-0.5 text-sm text-glow-gold/70">
               <p>称号：{info.title}</p>
               <p>現在の装備：{info.equipmentName}</p>
-              <p>
-                実績称号：
-                {currentTitle ? `${currentTitle.icon} ${currentTitle.name}` : "まだありません"}
-              </p>
             </div>
           </div>
 
@@ -171,88 +142,6 @@ export default function CharacterPage() {
           </ul>
         </div>
 
-        {/* 実績で獲得した称号。未解放のものは選べない。 */}
-        <div className="mt-6 rounded-2xl border-2 border-glow-gold/40 bg-black/30 p-5">
-          <h2 className="mb-1 text-sm font-semibold text-glow-gold">
-            称号を選ぶ
-          </h2>
-          <p className="mb-4 text-[11px] text-glow-gold/50">
-            実績を解放すると、その名前を称号として選べるようになります。
-          </p>
-          {unlockedAchievements.length === 0 ? (
-            <p className="text-xs text-glow-gold/40">
-              まだ称号がありません。実績を解放すると選べるようになります。
-            </p>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {unlockedAchievements.map((achievement) => {
-                const isSelected = currentTitle?.id === achievement.id;
-                return (
-                  <button
-                    key={achievement.id}
-                    type="button"
-                    onClick={() => handleSelectTitle(achievement.id)}
-                    aria-pressed={isSelected}
-                    className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
-                      isSelected
-                        ? "border-glow-gold bg-glow-gold text-[#241F1A] font-bold"
-                        : "border-glow-gold/30 text-glow-gold/70 hover:border-glow-gold hover:text-glow-gold"
-                    }`}
-                  >
-                    {achievement.icon} {achievement.name}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* 実績一覧。条件は隠さず、常に目標として見えるようにする。 */}
-        <div className="mt-6 rounded-2xl border-2 border-glow-gold/40 bg-black/30 p-5">
-          <h2 className="mb-4 text-sm font-semibold text-glow-gold">実績</h2>
-          <ul className="space-y-2">
-            {ACHIEVEMENTS.map((achievement) => {
-              const unlocked = achievement.isUnlocked(playerStats);
-              return (
-                <li
-                  key={achievement.id}
-                  className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 text-sm ${
-                    unlocked
-                      ? "border-glow-gold/25 bg-black/20"
-                      : "border-glow-gold/10 bg-black/10"
-                  }`}
-                >
-                  <span className="shrink-0 text-lg">
-                    {unlocked ? achievement.icon : "🔒"}
-                  </span>
-                  <div className="min-w-0 flex-1 text-left">
-                    <p
-                      className={
-                        unlocked
-                          ? "font-medium text-glow-gold"
-                          : "font-medium text-glow-gold/45"
-                      }
-                    >
-                      {achievement.name}
-                    </p>
-                    <p
-                      className={
-                        unlocked ? "text-xs text-glow-gold/60" : "text-xs text-glow-gold/35"
-                      }
-                    >
-                      {achievement.description}
-                    </p>
-                  </div>
-                  {unlocked && (
-                    <span className="shrink-0 rounded-full bg-glow-gold/15 px-2 py-0.5 text-[10px] font-bold text-glow-gold">
-                      達成
-                    </span>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
       </div>
       <AppNav />
     </main>

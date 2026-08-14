@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import type { BookLog } from "@/lib/types";
 import { ACQUISITION_LABELS, FORMAT_LABELS } from "@/lib/types";
-import MiniRatingRadar from "@/components/MiniRatingRadar";
 
 type Props = {
   log: BookLog;
@@ -74,54 +73,48 @@ export default function ReadingLogItem({
         </button>
       </div>
 
-      <div className="flex flex-col items-start gap-3 sm:flex-row sm:justify-between">
-        <div className="min-w-0 w-full flex-1 pr-1 sm:w-auto">
-          <h3 className="break-words font-serif text-base font-medium leading-snug text-ink sm:text-lg">
-            {log.title}
-          </h3>
-          {log.author && (
-            <p className="mt-0.5 text-sm text-ink/45">{log.author}</p>
-          )}
+      <div className="min-w-0 w-full pr-1">
+        <h3 className="break-words font-serif text-base font-medium leading-snug text-ink sm:text-lg">
+          {log.title}
+        </h3>
+        {log.author && (
+          <p className="mt-0.5 text-sm text-ink/45">{log.author}</p>
+        )}
 
-          <div className="mt-2 flex flex-col gap-1 text-xs">
-            <span className="w-fit rounded-full bg-accent-soft px-2.5 py-1 font-medium text-accent">
-              {log.startDate && `${formatDate(log.startDate)}〜`}
-              {formatDate(log.finishedDate)} クエストクリア
+        <div className="mt-2 flex flex-col gap-1 text-xs">
+          <span className="w-fit rounded-full bg-accent-soft px-2.5 py-1 font-medium text-accent">
+            {log.startDate && `${formatDate(log.startDate)}〜`}
+            {formatDate(log.finishedDate)} クエストクリア
+          </span>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] text-ink/55 ring-1 ring-inset ring-ink/10">
+              {ACQUISITION_LABELS[log.acquisition]}
             </span>
-            <div className="flex flex-wrap items-center gap-1.5">
+            <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] text-ink/55 ring-1 ring-inset ring-ink/10">
+              {FORMAT_LABELS[log.format]}
+            </span>
+            {log.pages !== undefined && (
               <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] text-ink/55 ring-1 ring-inset ring-ink/10">
-                {ACQUISITION_LABELS[log.acquisition]}
+                {log.pages.toLocaleString()}ページ
               </span>
-              <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] text-ink/55 ring-1 ring-inset ring-ink/10">
-                {FORMAT_LABELS[log.format]}
+            )}
+            {log.shared && (
+              <span className="flex items-center gap-1 rounded-full bg-gold-soft px-2.5 py-1 text-gold">
+                <svg viewBox="0 0 20 20" className="h-3 w-3 fill-current">
+                  <path d="M15 6a2 2 0 1 0-1.94-2.5L7.9 6.32a2 2 0 1 0 0 3.36l5.16 2.82a2 2 0 1 0 .72-1.36L8.62 8.32a2.02 2.02 0 0 0 0-.64l5.16-2.82c.34.28.76.46 1.22.46Z" />
+                </svg>
+                シェア済み
               </span>
-              {log.pages !== undefined && (
-                <span className="rounded-full bg-paper px-2 py-0.5 text-[10px] text-ink/55 ring-1 ring-inset ring-ink/10">
-                  {log.pages.toLocaleString()}ページ
-                </span>
-              )}
-              {log.shared && (
-                <span className="flex items-center gap-1 rounded-full bg-gold-soft px-2.5 py-1 text-gold">
-                  <svg viewBox="0 0 20 20" className="h-3 w-3 fill-current">
-                    <path d="M15 6a2 2 0 1 0-1.94-2.5L7.9 6.32a2 2 0 1 0 0 3.36l5.16 2.82a2 2 0 1 0 .72-1.36L8.62 8.32a2.02 2.02 0 0 0 0-.64l5.16-2.82c.34.28.76.46 1.22.46Z" />
-                  </svg>
-                  シェア済み
-                </span>
-              )}
-              {log.keepForever && (
-                <span className="flex items-center gap-1 rounded-full bg-gold-soft px-2.5 py-1 text-gold">
-                  <svg viewBox="0 0 20 20" className="h-3 w-3 fill-current">
-                    <path d="M10 2 4 4v6c0 4.4 2.6 7.6 6 8.9 3.4-1.3 6-4.5 6-8.9V4l-6-2Z" />
-                  </svg>
-                  永久保存
-                </span>
-              )}
-            </div>
+            )}
+            {log.keepForever && (
+              <span className="flex items-center gap-1 rounded-full bg-gold-soft px-2.5 py-1 text-gold">
+                <svg viewBox="0 0 20 20" className="h-3 w-3 fill-current">
+                  <path d="M10 2 4 4v6c0 4.4 2.6 7.6 6 8.9 3.4-1.3 6-4.5 6-8.9V4l-6-2Z" />
+                </svg>
+                永久保存
+              </span>
+            )}
           </div>
-        </div>
-
-        <div className="self-center sm:ml-[-2cm] sm:self-auto">
-          <MiniRatingRadar ratings={log.ratings} size="lg" />
         </div>
       </div>
 
