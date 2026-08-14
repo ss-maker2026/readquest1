@@ -199,7 +199,6 @@ export default function ReadingLogApp() {
 
       <ReadingCharacter
         count={effectiveCount}
-        logs={logs}
         onStartQuest={() => setFormState({ mode: "create" })}
         isAtMax={logs.length >= MAX_LOGS}
         formOpen={formState !== null}
@@ -224,9 +223,7 @@ export default function ReadingLogApp() {
             onClick={() => setShowDataManagement((v) => !v)}
             className="text-xs text-glow-gold/40 underline decoration-dotted underline-offset-4 transition-colors hover:text-glow-gold/70"
           >
-            {showDataManagement
-              ? "設定を閉じる"
-              : "⚙ 設定（CSV書き出し・読み込み）"}
+            {showDataManagement ? "冒険の書を閉じる" : "⚙ 冒険の書"}
           </button>
           {showDataManagement && (
             <div className="flex w-full justify-center rounded-2xl border border-dashed border-glow-gold/30 bg-black/25 px-4 py-3">

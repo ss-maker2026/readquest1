@@ -9,7 +9,6 @@ import { loadStoredLogs } from "@/lib/storage";
 import { getCharacterProgress, applyDungeonZoneStyles } from "@/lib/character";
 import { getLevelInfo, EQUIPMENT_TIERS } from "@/lib/levels";
 import { calculateTotalXpForBookCount } from "@/lib/xp";
-import { calculateStreak } from "@/lib/streak";
 import { ACHIEVEMENTS, getUnlockedAchievements } from "@/lib/achievements";
 import {
   getCurrentTitle,
@@ -43,13 +42,12 @@ export default function CharacterPage() {
   const totalXp = calculateTotalXpForBookCount(totalBooks);
   const { level } = getCharacterProgress(totalBooks);
   const info = getLevelInfo(level);
-  const streak = calculateStreak(logs);
 
   const playerStats = {
     totalBooks,
     level,
-    currentStreak: streak.currentStreak,
-    longestStreak: streak.longestStreak,
+    currentStreak: 0,
+    longestStreak: 0,
   };
   const unlockedAchievements = getUnlockedAchievements(playerStats);
   const currentTitle = getCurrentTitle(playerStats, selectedTitleId);
@@ -126,20 +124,6 @@ export default function CharacterPage() {
                 {totalXp.toLocaleString()}
               </p>
               <p className="text-[11px] text-glow-gold/60">累計XP</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-px border-t border-glow-gold/20 bg-glow-gold/10 text-center">
-            <div className="bg-black/25 px-3 py-3">
-              <p className="text-sm font-semibold text-glow-green">
-                🔥 {streak.currentStreak.toLocaleString()}日
-              </p>
-              <p className="text-[11px] text-glow-gold/50">連続読書日数</p>
-            </div>
-            <div className="bg-black/25 px-3 py-3">
-              <p className="text-sm font-semibold text-glow-green">
-                {streak.longestStreak.toLocaleString()}日
-              </p>
-              <p className="text-[11px] text-glow-gold/50">最長連続記録</p>
             </div>
           </div>
         </div>

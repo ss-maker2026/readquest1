@@ -4,7 +4,6 @@ import { Press_Start_2P } from "next/font/google";
 import { getCharacterProgress } from "@/lib/character";
 import { getXpProgress, getNextEquipmentReward } from "@/lib/levels";
 import { calculateTotalXpForBookCount } from "@/lib/xp";
-import type { BookLog } from "@/lib/types";
 
 const pixelFont = Press_Start_2P({
   subsets: ["latin"],
@@ -15,26 +14,17 @@ const pixelFont = Press_Start_2P({
 type Props = {
   // 実際の記録数、またはレベルプレビュー中はプレビュー用の冊数。
   count: number;
-  // 「今日の読書」の判定に使う実データ（プレビューの影響を受けない）。
-  logs: BookLog[];
   onStartQuest: () => void;
   isAtMax: boolean;
   // 記録の追加・編集フォームが開いている間は、クエスト開始ボタンを隠す。
   formOpen: boolean;
 };
 
-function todayStr() {
-  const d = new Date();
-  const offset = d.getTimezoneOffset();
-  return new Date(d.getTime() - offset * 60 * 1000).toISOString().slice(0, 10);
-}
-
 // ホーム画面の主役となるキャラクターカード。優先順位は上から
 // 1.レベル 2.キャラクター名 3.XP 4.次のレベルまで
-// 5.今日の読書 6.読書クエスト開始 7.次の報酬、の順。
+// 5.読書クエスト開始 6.次の報酬、の順。
 export default function ReadingCharacter({
   count,
-  logs,
   onStartQuest,
   isAtMax,
   formOpen,
@@ -42,7 +32,6 @@ export default function ReadingCharacter({
   const { level, title, isMaxLevel } = getCharacterProgress(count);
   const xpProgress = getXpProgress(calculateTotalXpForBookCount(count));
   const nextReward = getNextEquipmentReward(level);
-  const todayCount = logs.filter((log) => log.finishedDate === todayStr()).length;
 
   const xpBarPercent =
     xpProgress.isMaxLevel || xpProgress.xpToNextLevel === null
@@ -93,15 +82,7 @@ export default function ReadingCharacter({
           </p>
         </div>
 
-        {/* 5. 今日の読書 */}
-        <div className="mt-2 flex flex-col items-center gap-1">
-          <p className="text-xs text-glow-gold/60">
-            今日の読書：
-            {todayCount > 0 ? `${todayCount}冊読了` : "まだ記録がありません"}
-          </p>
-        </div>
-
-        {/* 6. 読書クエスト開始 */}
+        {/* 5. 読書クエスト開始 */}
         {formOpen ? null : isAtMax ? (
           <p className="mt-1 w-full max-w-xs rounded-full border border-dashed border-glow-gold/40 bg-black/30 py-2.5 text-center text-xs font-medium text-glow-gold/40">
             上限に達しました
@@ -116,7 +97,7 @@ export default function ReadingCharacter({
           </button>
         )}
 
-        {/* 7. 次の報酬 */}
+        {/* 6. 次の報酬 */}
         <p className="text-[11px] text-glow-gold/50">
           {nextReward
             ? `次の報酬：${nextReward.equipmentName}（Lv.${nextReward.level}〜）`
