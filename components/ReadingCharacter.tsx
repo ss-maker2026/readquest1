@@ -4,6 +4,7 @@ import { Press_Start_2P } from "next/font/google";
 import { getCharacterProgress } from "@/lib/character";
 import { getXpProgress, getNextEquipmentReward } from "@/lib/levels";
 import { calculateTotalXpForBookCount } from "@/lib/xp";
+import FootstepCharacter from "@/components/FootstepCharacter";
 
 const pixelFont = Press_Start_2P({
   subsets: ["latin"],
@@ -44,17 +45,20 @@ export default function ReadingCharacter({
   return (
     <div className="mb-8 overflow-hidden rounded-2xl border-2 border-glow-gold/50 bg-black/35 shadow-sm shadow-ink/5 backdrop-blur-sm">
       <div className="flex flex-col items-center gap-3 px-6 py-7 text-center sm:px-8">
-        {/* 1. レベル */}
-        <p
-          className={`${pixelFont.className} mt-1 text-4xl tracking-tight text-glow-green`}
-        >
-          Lv.{level}
-        </p>
-
-        {/* 2. キャラクター名（称号） */}
-        <p className="font-serif text-xl font-medium text-glow-gold">
-          {title}
-        </p>
+        {/* 1〜2. レベル・称号（右横に足踏みするキャラクターを試験配置） */}
+        <div className="flex items-center gap-2">
+          <div className="flex flex-col items-center">
+            <p
+              className={`${pixelFont.className} mt-1 text-4xl tracking-tight text-glow-green`}
+            >
+              Lv.{level}
+            </p>
+            <p className="font-serif text-xl font-medium text-glow-gold">
+              {title}
+            </p>
+          </div>
+          <FootstepCharacter level={level} className="ml-[5mm] h-16 w-9" />
+        </div>
 
         {/* 3〜4. XP・進捗バー・次のレベルまで */}
         <div className="mt-1 w-full max-w-xs">
