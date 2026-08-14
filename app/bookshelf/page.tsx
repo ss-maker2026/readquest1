@@ -9,7 +9,7 @@ import ReadingLogItem from "@/components/ReadingLogItem";
 import { LOGS_STORAGE_KEY, loadStoredLogs } from "@/lib/storage";
 import { getCharacterProgress, applyDungeonZoneStyles } from "@/lib/character";
 import { calculateTotalXpForBookCount } from "@/lib/xp";
-import { averageRating, type BookLog } from "@/lib/types";
+import type { BookLog } from "@/lib/types";
 
 type SortOption = "date-desc" | "date-asc" | "rating-desc" | "rating-asc";
 
@@ -26,8 +26,8 @@ const sortLogs = (list: BookLog[]) =>
       : b.finishedDate.localeCompare(a.finishedDate)
   );
 
-// 一覧表示用の並び替え・絞り込み。平均点は星評価未入力の本には存在しないため、
-// 平均点順のときは未評価の本を常に末尾へ回す。
+// 一覧表示用の並び替え・絞り込み。評価は星評価未入力の本には存在しないため、
+// 評価順のときは未評価の本を常に末尾へ回す。
 const getDisplayedLogs = (
   list: BookLog[],
   sortOption: SortOption,
@@ -36,18 +36,15 @@ const getDisplayedLogs = (
   const filtered =
     minRating === null
       ? list
-      : list.filter((log) => {
-          const avg = averageRating(log.ratings);
-          return avg !== null && avg >= minRating;
-        });
+      : list.filter((log) => log.rating !== undefined && log.rating >= minRating);
 
   if (sortOption === "date-desc") return sortLogs(filtered);
   if (sortOption === "date-asc") return sortLogs(filtered).reverse();
 
-  const rated = filtered.filter((log) => averageRating(log.ratings) !== null);
-  const unrated = filtered.filter((log) => averageRating(log.ratings) === null);
+  const rated = filtered.filter((log) => log.rating !== undefined);
+  const unrated = filtered.filter((log) => log.rating === undefined);
   rated.sort((a, b) => {
-    const diff = (averageRating(a.ratings) ?? 0) - (averageRating(b.ratings) ?? 0);
+    const diff = (a.rating ?? 0) - (b.rating ?? 0);
     return sortOption === "rating-desc" ? -diff : diff;
   });
   return [...rated, ...unrated];

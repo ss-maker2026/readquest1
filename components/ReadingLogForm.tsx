@@ -1,18 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type {
-  AcquisitionMethod,
-  BookFormat,
-  BookLog,
-  BookRatings,
-} from "@/lib/types";
-import {
-  ACQUISITION_LABELS,
-  FORMAT_LABELS,
-  RATING_CRITERIA,
-  defaultRatings,
-} from "@/lib/types";
+import type { AcquisitionMethod, BookFormat, BookLog } from "@/lib/types";
+import { ACQUISITION_LABELS, FORMAT_LABELS } from "@/lib/types";
 
 export type NewBookLog = {
   title: string;
@@ -23,7 +13,7 @@ export type NewBookLog = {
   review: string;
   shared: boolean;
   keepForever: boolean;
-  ratings: BookRatings;
+  rating: number;
   pages?: number;
   startDate?: string;
 };
@@ -58,9 +48,7 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
   const [review, setReview] = useState(initial?.review ?? "");
   const [shared, setShared] = useState(initial?.shared ?? false);
   const [keepForever, setKeepForever] = useState(initial?.keepForever ?? false);
-  const [ratings, setRatings] = useState<BookRatings>(
-    initial?.ratings ?? defaultRatings()
-  );
+  const [rating, setRating] = useState(initial?.rating ?? 3);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +67,7 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
       review: review.trim(),
       shared,
       keepForever,
-      ratings,
+      rating,
       pages:
         pages.trim() !== "" && Number.isFinite(pagesNum) && pagesNum > 0
           ? Math.round(pagesNum)
@@ -184,8 +172,8 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
                   aria-pressed={acquisition === key}
                   className={`flex-1 rounded-lg border px-3 py-2 text-sm transition-colors ${
                     acquisition === key
-                      ? "border-accent bg-accent text-white"
-                      : "border-ink/10 bg-paper/60 text-ink/60 hover:border-accent/40"
+                      ? "border-glow-green bg-glow-green text-[#241F1A]"
+                      : "border-ink/10 bg-paper/60 text-ink/60 hover:border-glow-green/40"
                   }`}
                 >
                   {ACQUISITION_LABELS[key]}
@@ -208,8 +196,8 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
                 aria-pressed={format === key}
                 className={`flex-1 rounded-lg border px-2 py-2 text-xs transition-colors sm:text-sm ${
                   format === key
-                    ? "border-accent bg-accent text-white"
-                    : "border-ink/10 bg-paper/60 text-ink/60 hover:border-accent/40"
+                    ? "border-glow-green bg-glow-green text-[#241F1A]"
+                    : "border-ink/10 bg-paper/60 text-ink/60 hover:border-glow-green/40"
                 }`}
               >
                 {FORMAT_LABELS[key]}
@@ -237,14 +225,7 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
         <span className="text-xs font-medium tracking-wide text-ink/50">
           評価（5点満点）
         </span>
-        {RATING_CRITERIA.map(({ key, label }) => (
-          <StarRow
-            key={key}
-            label={label}
-            value={ratings[key]}
-            onChange={(v) => setRatings((prev) => ({ ...prev, [key]: v }))}
-          />
-        ))}
+        <StarRow value={rating} onChange={setRating} />
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:gap-8">
@@ -281,38 +262,33 @@ export default function ReadingLogForm({ initial, onSubmit, onCancel }: Props) {
 }
 
 function StarRow({
-  label,
   value,
   onChange,
 }: {
-  label: string;
   value: number;
   onChange: (value: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3">
-      <span className="text-sm text-ink/65">{label}</span>
-      <div className="flex gap-1">
-        {[1, 2, 3, 4, 5].map((n) => (
-          <button
-            key={n}
-            type="button"
-            onClick={() => onChange(n)}
-            aria-label={`${label} ${n}点`}
-            aria-pressed={n <= value}
-            className="p-0.5"
+    <div className="flex justify-center gap-1.5">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <button
+          key={n}
+          type="button"
+          onClick={() => onChange(n)}
+          aria-label={`${n}点`}
+          aria-pressed={n <= value}
+          className="p-0.5"
+        >
+          <svg
+            viewBox="0 0 20 20"
+            className={`h-7 w-7 transition-colors ${
+              n <= value ? "fill-glow-green" : "fill-ink/15"
+            }`}
           >
-            <svg
-              viewBox="0 0 20 20"
-              className={`h-5 w-5 transition-colors ${
-                n <= value ? "fill-gold" : "fill-ink/15"
-              }`}
-            >
-              <path d="M10 1.2 12.7 7l6.3.7-4.6 4.4 1.2 6.2L10 15.2l-5.6 3.1 1.2-6.2L1 7.7 7.3 7Z" />
-            </svg>
-          </button>
-        ))}
-      </div>
+            <path d="M10 1.2 12.7 7l6.3.7-4.6 4.4 1.2 6.2L10 15.2l-5.6 3.1 1.2-6.2L1 7.7 7.3 7Z" />
+          </svg>
+        </button>
+      ))}
     </div>
   );
 }

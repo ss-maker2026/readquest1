@@ -1,10 +1,7 @@
 import {
-  RATING_CRITERIA,
-  defaultRatings,
   type AcquisitionMethod,
   type BookFormat,
   type BookLog,
-  type BookRatings,
 } from "@/lib/types";
 
 const ACQUISITION_VALUES: AcquisitionMethod[] = ["purchase", "rental"];
@@ -14,25 +11,12 @@ function isValidDate(value: unknown): value is string {
   return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
 
-// 保存されていた評価オブジェクトを補正する。欠けている軸はdefaultRatings()の
-// 値(3)で補い、値が不正・範囲外の軸は1〜5にクランプする。
-// 評価データが一つも見つからない場合はundefined（未評価）を返す。
-function normalizeRatings(raw: unknown): BookRatings | undefined {
-  if (!raw || typeof raw !== "object") return undefined;
-  const source = raw as Record<string, unknown>;
-  const hasAny = RATING_CRITERIA.some(
-    (c) => typeof source[c.key] === "number" && Number.isFinite(source[c.key])
-  );
-  if (!hasAny) return undefined;
-
-  const result = defaultRatings();
-  for (const c of RATING_CRITERIA) {
-    const v = source[c.key];
-    if (typeof v === "number" && Number.isFinite(v)) {
-      result[c.key] = Math.min(5, Math.max(1, Math.round(v)));
-    }
-  }
-  return result;
+// 保存されていた評価値を1〜5にクランプする。不正・範囲外・欠損は
+// undefined（未評価）を返す。旧バージョン（6項目のratingsオブジェクト）の
+// データはここでは読み替えず、そのまま未評価として扱う。
+function normalizeRating(raw: unknown): number | undefined {
+  if (typeof raw !== "number" || !Number.isFinite(raw)) return undefined;
+  return Math.min(5, Math.max(1, Math.round(raw)));
 }
 
 // 保存済み・インポートされた形状不明のデータ1件を、現行のBookLog型へ
@@ -75,7 +59,7 @@ export function normalizeBookLog(raw: unknown): BookLog | null {
       typeof source.createdAt === "number" && Number.isFinite(source.createdAt)
         ? source.createdAt
         : Date.now(),
-    ratings: normalizeRatings(source.ratings),
+    rating: normalizeRating(source.rating),
     pages:
       typeof source.pages === "number" &&
       Number.isFinite(source.pages) &&

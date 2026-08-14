@@ -83,7 +83,7 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#34418C",
     glow3: "#1B2550",
     textRgb: "236 231 218",
-    accentRgb: "111 227 176",
+    accentRgb: "83 170 132",
     goldRgb: "240 217 140",
     quotes: [
       {
@@ -108,7 +108,7 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#204B35",
     glow3: "#132C1F",
     textRgb: "236 231 218",
-    accentRgb: "111 227 176",
+    accentRgb: "83 170 132",
     goldRgb: "240 217 140",
     quotes: [
       {
@@ -133,7 +133,7 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#553F17",
     glow3: "#2B200B",
     textRgb: "236 231 218",
-    accentRgb: "111 227 176",
+    accentRgb: "83 170 132",
     goldRgb: "240 217 140",
     quotes: [
       {
@@ -158,7 +158,7 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#153B41",
     glow3: "#0C2124",
     textRgb: "236 231 218",
-    accentRgb: "111 227 176",
+    accentRgb: "83 170 132",
     goldRgb: "240 217 140",
     quotes: [
       {
@@ -183,7 +183,7 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#552114",
     glow3: "#2E120B",
     textRgb: "236 231 218",
-    accentRgb: "111 227 176",
+    accentRgb: "83 170 132",
     goldRgb: "240 217 140",
     quotes: [
       {
@@ -208,7 +208,7 @@ export const DUNGEON_ZONES: DungeonZone[] = [
     glow2: "#2E1B44",
     glow3: "#190E24",
     textRgb: "236 231 218",
-    accentRgb: "111 227 176",
+    accentRgb: "83 170 132",
     goldRgb: "240 217 140",
     quotes: [
       {

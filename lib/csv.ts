@@ -1,9 +1,4 @@
-import type {
-  AcquisitionMethod,
-  BookFormat,
-  BookLog,
-  BookRatings,
-} from "@/lib/types";
+import type { AcquisitionMethod, BookFormat, BookLog } from "@/lib/types";
 
 const CSV_COLUMNS = [
   "title",
@@ -14,12 +9,7 @@ const CSV_COLUMNS = [
   "review",
   "shared",
   "keepForever",
-  "rating_tempo",
-  "rating_immersion",
-  "rating_impact",
-  "rating_learning",
-  "rating_excitement",
-  "rating_emotionalImpact",
+  "rating",
   "pages",
   "startDate",
 ] as const;
@@ -34,7 +24,6 @@ function csvEscape(value: string): string {
 export function logsToCSV(logs: BookLog[]): string {
   const header = CSV_COLUMNS.join(",");
   const rows = logs.map((log) => {
-    const r = log.ratings;
     const fields = [
       log.title,
       log.author,
@@ -44,12 +33,7 @@ export function logsToCSV(logs: BookLog[]): string {
       log.review,
       log.shared ? "true" : "false",
       log.keepForever ? "true" : "false",
-      r ? String(r.tempo) : "",
-      r ? String(r.immersion) : "",
-      r ? String(r.impact) : "",
-      r ? String(r.learning) : "",
-      r ? String(r.excitement) : "",
-      r ? String(r.emotionalImpact) : "",
+      log.rating !== undefined ? String(log.rating) : "",
       log.pages !== undefined ? String(log.pages) : "",
       log.startDate ?? "",
     ];
@@ -152,26 +136,8 @@ export function csvToLogs(text: string): BookLog[] {
       const formatRaw = get("format").trim() as BookFormat;
       const finishedDateRaw = get("finishedDate").trim();
 
-      const ratingKeys = [
-        "rating_tempo",
-        "rating_immersion",
-        "rating_impact",
-        "rating_learning",
-        "rating_excitement",
-        "rating_emotionalImpact",
-      ];
-      const rawRatings = ratingKeys.map(get);
-      const hasRatings = rawRatings.some((v) => v.trim() !== "");
-      const ratings: BookRatings | undefined = hasRatings
-        ? {
-            tempo: clampRating(rawRatings[0]),
-            immersion: clampRating(rawRatings[1]),
-            impact: clampRating(rawRatings[2]),
-            learning: clampRating(rawRatings[3]),
-            excitement: clampRating(rawRatings[4]),
-            emotionalImpact: clampRating(rawRatings[5]),
-          }
-        : undefined;
+      const ratingRaw = get("rating").trim();
+      const rating = ratingRaw !== "" ? clampRating(ratingRaw) : undefined;
 
       const pagesRaw = get("pages").trim();
       const pagesNum = Number(pagesRaw);
@@ -200,7 +166,7 @@ export function csvToLogs(text: string): BookLog[] {
         shared: get("shared").trim().toLowerCase() === "true",
         keepForever: get("keepForever").trim().toLowerCase() === "true",
         createdAt: Date.now() + i,
-        ratings,
+        rating,
         pages,
         startDate,
       };
