@@ -1,19 +1,26 @@
-export const MAX_LOGS = 10000;
+export const MAX_LOGS = 1000;
 export const MAX_LEVEL = 99;
+
+// 序盤のレベルアップが1冊刻みになりすぎないよう設ける最低ライン。
+// 2次関数カーブの値がこれを上回るまでは「1レベルあたりMIN_BOOKS_PER_LEVEL冊」で進む。
+const MIN_BOOKS_PER_LEVEL = 2;
 
 /**
  * レベル1〜99の必要冊数しきい値を2次関数（放物線）カーブで生成する。
  * 1レベルあたりに必要な冊数の「増分」自体がレベルが上がるほど連続的に
- * 大きくなっていくため、序盤だけ「1冊=1レベル」のような平坦な区間が
- * できることがなく、序盤は緩やかに・終盤は重く、を滑らかに実現する。
- * threshold[0] は Lv.1（0冊）、threshold[98] は Lv.99（10,000冊）。
+ * 大きくなっていくため、序盤は緩やかに・終盤は重く、を滑らかに実現する。
+ * ただし2次関数の値だけだと序盤が1冊刻みになりすぎるため、
+ * MIN_BOOKS_PER_LEVEL による直線の最低ラインとの大きい方を採用する
+ * （序盤は直線が優位＝一定ペース、中盤以降は2次関数が上回り徐々に重くなる）。
+ * threshold[0] は Lv.1（0冊）、threshold[98] は Lv.99（1,000冊）。
  */
 function buildThresholds(): number[] {
   const arr: number[] = [];
   for (let level = 1; level <= MAX_LEVEL; level++) {
     const progress = (level - 1) / (MAX_LEVEL - 1);
-    const t = Math.round(MAX_LOGS * progress * progress);
-    arr.push(t);
+    const quad = Math.round(MAX_LOGS * progress * progress);
+    const linearFloor = Math.round(MIN_BOOKS_PER_LEVEL * (level - 1));
+    arr.push(Math.max(quad, linearFloor));
   }
   for (let i = 1; i < arr.length; i++) {
     if (arr[i] <= arr[i - 1]) arr[i] = arr[i - 1] + 1;
